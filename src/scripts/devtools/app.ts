@@ -7,8 +7,8 @@ export class App extends StdApp {
         super();
 
         browser.devtools.panels.create(
-            "My Panel",
-            "icons/star.png",
+            "BX-Inspector",
+            "icon.png",
             "devpanel.html"
         ).then(() => {
             // newPanel.onShown.addListener(initialisePanel);

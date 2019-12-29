@@ -7,6 +7,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ExtraWatchWebpackPlugin = require("extra-watch-webpack-plugin");
 const NunjucksWebpackPlugin = require("nunjucks-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
+const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 
 const config = {
     context: resolve(__dirname, "src"),
@@ -14,6 +15,12 @@ const config = {
     entry: {
         "devtools": [
             "./devtools.ts",
+        ],
+        "devpanel": [
+            "./devpanel.ts",
+        ],
+        "background": [
+            "./background.ts",
         ],
     },
 
@@ -166,21 +173,28 @@ const config = {
         }),
 
         new VueLoaderPlugin(),
+
+        new MonacoWebpackPlugin({
+            languages: ["php"]
+        }),
     ],
 
     resolve: {
         modules: [
             "node_modules",
+            ".",
         ],
 
         alias: {
             "@devtools": resolve(__dirname, "src/scripts/devtools"),
             "@devpanel": resolve(__dirname, "src/scripts/devpanel"),
+            "@background": resolve(__dirname, "src/scripts/background"),
+            "@common": resolve(__dirname, "src/scripts/common"),
             "@std": resolve(__dirname, "src/scripts/std"),
             "@styles": resolve(__dirname, "src/styles"),
         },
 
-        extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".less", ".vue"],
+        extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".less", ".vue", ".json"],
     },
 };
 

@@ -1,0 +1,18 @@
+*:not(.codicon) {
+    font-family: "DejaVu Sans", sans-serif !important;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.hide {
+    display: none;
+}

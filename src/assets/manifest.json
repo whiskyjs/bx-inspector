@@ -2,10 +2,27 @@
   "description": "Средства отладки для CMS 1С-Bitrix",
   "manifest_version": 2,
   "name": "BX-Inspector",
-  "version": "1.0",
+  "version": "0.1.0",
   "icons": {
     "48": "icons/border-48.png"
   },
   "content_scripts": [],
+  "background": {
+    "scripts": [
+      "js/runtime.js",
+      "js/vendors.js",
+      "js/background.js"
+    ]
+  },
+  "permissions": [
+    "<all_urls>",
+    "tabs",
+    "cookies",
+    "storage",
+    "unlimitedStorage",
+    "webRequest",
+    "webRequestBlocking",
+    "webNavigation"
+  ],
   "devtools_page": "devtools.html"
 }

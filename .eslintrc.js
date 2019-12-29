@@ -17,7 +17,7 @@ module.exports = {
         "ecmaVersion": 2018,
         "sourceType": "module"
     },
-    "plugins": ["react", "vue"],
+    "plugins": ["react", "vue", "react-hooks"],
     "rules": {
         "max-len": [
             1,
@@ -90,6 +90,8 @@ module.exports = {
             2,
             "never"
         ],
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn"
     },
     "settings": {"react": {"version": "detect"}},
     "overrides": [

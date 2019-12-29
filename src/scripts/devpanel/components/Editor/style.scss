@@ -1,0 +1,22 @@
+//noinspection CssUnknownTarget
+@import "@styles/variables.scss";
+
+.editor {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.editor__header {
+    height: 0;
+}
+
+.editor__input {
+    flex: 1;
+}
+
+.editor__footer {
+    height: 30px;
+    background-color: $background-color;
+    border-top: 1px $border-color solid;
+}

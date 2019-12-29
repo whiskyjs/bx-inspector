@@ -1,0 +1,112 @@
+//noinspection CssUnknownTarget
+@import "@styles/common.scss";
+//noinspection CssUnknownTarget
+@import "@styles/variables.scss";
+
+.tabs {
+    display: flex;
+    cursor: default;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+}
+
+.tabs__tab-headers {
+    background-color: $background-color;
+    border-bottom: 1px $border-color solid;
+
+    &, * {
+        user-select: none;
+    }
+}
+
+.tabs__tab-header {
+    position: relative;
+    background-color: $background-color;
+    height: 30px;
+    box-sizing: border-box;
+    float: left;
+    display: block;
+    padding: 6px 10px 4px;
+    font-size: 12px;
+
+    border-top: 2px transparent solid;
+
+    &:hover {
+        border-top-color: $hover-border-color;
+        background-color: $hover-background-color;
+    }
+}
+
+.tabs__tab-header--active {
+    &, &:hover {
+        border-top-color: $active-color;
+    }
+}
+
+.tabs__tab-header--closable {
+    padding-right: 24px;
+}
+
+.tabs__tab-header-close {
+    position: absolute;
+    right: 0;
+    height: 16px;
+    width: 16px;
+
+    &:after {
+        content: "×";
+        color: darken($active-color, 20);
+        cursor: pointer;
+    }
+}
+
+.tabs__tab-header-add {
+    position: relative;
+    background-color: #f9f9fa;
+    height: 30px;
+    float: left;
+    display: block;
+    padding: 0 8px;
+    font-size: 14px;
+
+    &:after {
+        content: "＋";
+        color: darken($active-color, 20);
+        cursor: pointer;
+        position: relative;
+        top: 8px;
+    }
+
+    &:hover {
+        background-color: $hover-background-color;
+
+        &:after {
+            color: $active-color;
+        }
+    }
+}
+
+.tabs__tab_panels {
+    transform-style: preserve-3d;
+    position: relative;
+    flex: 1;
+    display: flex;
+}
+
+.tabs__tab_panel {
+    position: absolute;
+    display: flex;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    transform: translate3d(0, 0, 0);
+}
+
+.tabs__tab_panel--active {
+    transform: translate3d(0, 0, 1px);
+}

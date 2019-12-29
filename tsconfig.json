@@ -19,6 +19,7 @@
     "noImplicitThis": true,
     "preserveConstEnums": true,
     "pretty": true,
+    "resolveJsonModule": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
@@ -29,7 +30,13 @@
         "./src/scripts/devtools/*"
       ],
       "@devpanel/*": [
-        "./src/scripts/devtools/*"
+        "./src/scripts/devpanel/*"
+      ],
+      "@background/*": [
+        "./src/scripts/background/*"
+      ],
+      "@common/*": [
+        "./src/scripts/common/*"
       ],
       "@std/*": [
         "./src/scripts/std/*"

@@ -1,0 +1,9 @@
+//noinspection CssUnknownTarget
+@import "@styles/variables.scss";
+
+.about {
+    background-color: $hover-background-color;
+    padding: 12px;
+    font-size: 12px;
+    flex: 1;
+}
