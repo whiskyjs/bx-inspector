@@ -44,9 +44,7 @@ export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHP
             <div className="php-console-editors">
                 <Tabs
                     canAddTabs={true}
-                    activeTab={editors.activeTab}
                     canCloseTabs={editors.tabs.length > 1}
-                    onTabClick={this.onTabClick}
                     onTabCloseClick={this.onTabCloseClick}
                     onTabAddClick={this.onTabAddClick}
                 >
@@ -72,13 +70,7 @@ export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHP
     protected onTabAddClick: TablessMouseEvent = () => {
         const {editors} = this.props;
 
-        editors.setActiveTab(editors.addTab());
-    };
-
-    protected onTabClick: TabMouseEvent = (e, tabId) => {
-        const {editors} = this.props;
-
-        editors.setActiveTab(tabId);
+        editors.addTab();
     };
 
     protected getEditorPanel = (tab: Instance<typeof PHPEditor>): Renderable => {

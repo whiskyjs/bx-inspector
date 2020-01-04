@@ -1,6 +1,7 @@
 import "./style.scss";
 
 import React, {Children, MouseEvent, PureComponent, ReactElement} from "react";
+import {find, findIndex} from "lodash";
 import classNames from "classnames";
 import {blocks, render} from "@common/functions";
 
@@ -50,11 +51,9 @@ export class Tab extends PureComponent<TabProps> {
     }
 }
 
-export type TabChild = ReactElement<TabProps>;
-
 export interface TabsProps {
     activeTab?: string;
-    canCloseTabs?: boolean | ((tab: ReactElement<TabProps>) => boolean);
+    canCloseTabs?: boolean | ((tab: Tab) => boolean);
     canAddTabs?: boolean;
     children?: any;
     onTabClick?: TabMouseEvent;
@@ -80,13 +79,44 @@ export class Tabs extends PureComponent<TabsProps, TabsState> {
         const {activeTab: activeTabState} = state;
 
         if (activeTabProps && (activeTabProps !== activeTabState)) {
-            return Object.assign(state, {
+            Object.assign(state, {
                 activeTab: activeTabProps,
                 previousTab: activeTabState,
             });
+        } else if (!activeTabProps) {
+            const {activeTab: prevActiveTab} = state;
+            const tabs = Tabs.getTabs(props);
+
+            if (!tabs) {
+                Object.assign(state, {
+                    activeTab: undefined,
+                });
+            } else {
+                const currentTabIndex = findIndex(tabs, (child: Tab) => {
+                    return child.props.id === prevActiveTab;
+                });
+
+                if (!~currentTabIndex || (currentTabIndex >= tabs.length)) {
+                    Object.assign(state, {
+                        activeTab: tabs[tabs.length - 1].props.id,
+                    })
+                }
+            }
         }
 
         return state;
+    }
+
+    protected static getTabs(props: TabsProps): Array<Tab> {
+        const {children} = props;
+
+        if (!children) {
+            return [];
+        }
+
+        return Array.isArray(children)
+            ? children
+            : [children];
     }
 
     constructor(props: TabsProps) {
@@ -108,8 +138,12 @@ export class Tabs extends PureComponent<TabsProps, TabsState> {
         </div>);
     }
 
-    protected onTabClick: TabMouseEvent = (e, tabId): void => {
+    protected onTabClick: TabMouseEvent = ({target}, tabId): void => {
         const {activeTab} = this.state;
+
+        if ((target instanceof HTMLElement) && target.matches(".tabs__tab-header-close")) {
+            return;
+        }
 
         this.setState({
             activeTab: tabId,
@@ -118,12 +152,12 @@ export class Tabs extends PureComponent<TabsProps, TabsState> {
     };
 
     protected renderHeaders(): ReactElement {
-        const {children, canAddTabs, onTabClick, onTabMouseDown, onTabCloseClick, onTabAddClick} = this.props;
+        const {canAddTabs, onTabClick, onTabMouseDown, onTabCloseClick, onTabAddClick} = this.props;
         const {activeTab} = this.state;
 
         return (<div className="tabs__tab-headers clearfix">
             <React.Fragment>
-                {Children.map(children || [], (tab: ReactElement) => {
+                {Children.map(Tabs.getTabs(this.props), (tab: Tab) => {
                     return (
                         <Tab
                             {...tab.props}
@@ -146,10 +180,11 @@ export class Tabs extends PureComponent<TabsProps, TabsState> {
         </div>);
     }
 
-    protected isTabClosable(tab: ReactElement<TabProps>): boolean {
-        const {children, canCloseTabs, onTabCloseClick} = this.props;
+    protected isTabClosable(tab: Tab): boolean {
+        const {canCloseTabs, onTabCloseClick} = this.props;
+        const tabs = Tabs.getTabs(this.props);
 
-        if (!children) {
+        if (!tabs) {
             return false;
         }
 
@@ -159,7 +194,7 @@ export class Tabs extends PureComponent<TabsProps, TabsState> {
             return (typeof onTabCloseClick === "function") && canCloseTabs(tab);
         }
 
-        return !Array.isArray(children) || (children.length > 1);
+        return tabs.length > 1;
     }
 
     protected renderPanel(): ReactElement {
@@ -175,35 +210,25 @@ export class Tabs extends PureComponent<TabsProps, TabsState> {
     }
 
     protected getTab(tabId: Optional<string> = this.state.activeTab): Optional<Tab> {
-        const {children} = this.props;
+        const tabs = Tabs.getTabs(this.props);
 
-        if (!tabId || !children) {
+        if (!tabId || !tabs) {
             return undefined;
         }
 
-        if (Array.isArray(children)) {
-            return children.find((tab: TabChild) => {
-                return tab.props.id === tabId;
-            });
-        }
-
-        return (children.props.id === tabId
-            ? children
-            : undefined);
+        return find(tabs, (tab: Tab) => {
+            return tab.props.id === tabId;
+        });
     }
 
     protected getFirstTab(): Optional<Tab> {
-        const {children} = this.props;
+        const tabs = Tabs.getTabs(this.props);
 
-        if (!children) {
+        if (!tabs) {
             return undefined;
         }
 
-        if (Array.isArray(children)) {
-            return children[0];
-        } else {
-            return children;
-        }
+        return tabs[0];
     }
 }
 

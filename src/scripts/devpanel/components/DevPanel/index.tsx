@@ -19,10 +19,6 @@ export interface DevPanelState {
 export class DevPanel extends React.PureComponent<DevPanelProps, DevPanelState> {
     constructor(props: {}) {
         super(props);
-
-        this.state = {
-            activeTab: "php-console",
-        }
     }
 
     public render(): ReactElement {

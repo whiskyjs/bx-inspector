@@ -16,7 +16,6 @@ export const PHPEditor = types.model("PHPEditor", {
 
 export const PHPEditors = types.model("PHPEditors", {
     tabs: types.array(PHPEditor),
-    activeTab: types.string,
 }).actions((self) => {
     return {
         addTab(tab?: Instance<typeof PHPEditor>): string {
@@ -33,23 +32,6 @@ export const PHPEditors = types.model("PHPEditors", {
 
             if (~tabIndex) {
                 self.tabs.splice(tabIndex, 1);
-
-                if (tabIndex >= self.tabs.length) {
-                    this.setActiveTab(self.tabs[self.tabs.length - 1].uuid);
-                } else {
-                    this.setActiveTab(self.tabs[tabIndex].uuid);
-                }
-
-                return true;
-            }
-
-            return false;
-        },
-        setActiveTab(tabId: string): boolean {
-            const tabIndex = self.tabs.findIndex((tab) => tab.uuid === tabId);
-
-            if (~tabIndex) {
-                self.activeTab = tabId;
 
                 return true;
             }
@@ -85,7 +67,6 @@ export const PHPResult = types.model("PHPResult", {
 
 export const PHPResults = types.model("PHPResults", {
     tabs: types.array(PHPResult),
-    activeTab: types.string,
 }).actions((self) => {
     return {
         addTab(tab?: Instance<typeof PHPResult>): string {
@@ -102,23 +83,6 @@ export const PHPResults = types.model("PHPResults", {
 
             if (~tabIndex) {
                 self.tabs.splice(tabIndex, 1);
-
-                if (tabIndex >= self.tabs.length) {
-                    this.setActiveTab(self.tabs[self.tabs.length - 1].uuid);
-                } else {
-                    this.setActiveTab(self.tabs[tabIndex].uuid);
-                }
-
-                return true;
-            }
-
-            return false;
-        },
-        setActiveTab(tabId: string): boolean {
-            const tabIndex = self.tabs.findIndex((tab) => tab.uuid === tabId);
-
-            if (~tabIndex) {
-                self.activeTab = tabId;
 
                 return true;
             }

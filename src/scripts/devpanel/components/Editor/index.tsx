@@ -117,7 +117,7 @@ export class Editor extends PureComponent<EditorProps, EditorState> {
     });
 
     public render(): ReactElement {
-        const {defaultValue, value, onChange} = this.props;
+        const {defaultValue, value} = this.props;
 
         return (
             <div className="editor">

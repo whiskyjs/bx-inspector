@@ -25,9 +25,7 @@ export class PHPConsoleResults extends PureComponent<PHPConsoleResultsProps, PHP
             <div className="php-console-results">
                 <Tabs
                     canAddTabs={true}
-                    activeTab={results.activeTab}
                     canCloseTabs={results.tabs.length > 1}
-                    onTabClick={this.onTabClick}
                     onTabCloseClick={this.onTabCloseClick}
                     onTabAddClick={this.onTabAddClick}
                 >
@@ -53,13 +51,7 @@ export class PHPConsoleResults extends PureComponent<PHPConsoleResultsProps, PHP
     protected onTabAddClick: TablessMouseEvent = () => {
         const {results} = this.props;
 
-        results.setActiveTab(results.addTab());
-    };
-
-    protected onTabClick: TabMouseEvent = (e, tabId) => {
-        const {results} = this.props;
-
-        results.setActiveTab(tabId);
+        results.addTab();
     };
 
     protected getResultPanel = (tab: Instance<typeof PHPResult>): Renderable => {
