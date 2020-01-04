@@ -9,15 +9,17 @@ export type TabMouseEvent = (e: MouseEvent<HTMLElement>, tabId: string) => void;
 
 export type TablessMouseEvent = (e: MouseEvent<HTMLElement>) => void;
 
+export type TabMouselessEvent = (tabId: string) => void;
+
 export interface TabProps {
     id: string;
     title: string;
     active?: boolean;
     closable?: boolean;
     onTabClick?: TabMouseEvent;
-    onTabMouseDown?: TabMouseEvent;
+    onTabMouseUp?: TabMouseEvent;
     onTabCloseClick?: TabMouseEvent;
-    panel: Renderable;
+    panel: ReactElement;
 }
 
 export class Tab extends PureComponent<TabProps> {
@@ -27,7 +29,7 @@ export class Tab extends PureComponent<TabProps> {
     };
 
     public render(): ReactElement {
-        const {id, title, active, closable, onTabClick, onTabMouseDown, onTabCloseClick} = this.props;
+        const {id, title, active, closable, onTabClick, onTabMouseUp, onTabCloseClick} = this.props;
 
         return (<div
             className={classNames(
@@ -36,7 +38,7 @@ export class Tab extends PureComponent<TabProps> {
                     "tabs__tab-header--closable": closable,
                 })}
             onClick={(e): void => onTabClick && onTabClick(e, id)}
-            onMouseDown={(e): void => onTabMouseDown && onTabMouseDown(e, id)}
+            onMouseUp={(e): void => onTabMouseUp && onTabMouseUp(e, id)}
         >
             {blocks([
                 [closable, (<div
@@ -56,8 +58,9 @@ export interface TabsProps {
     canCloseTabs?: boolean | ((tab: Tab) => boolean);
     canAddTabs?: boolean;
     children?: any;
+    className?: string;
     onTabClick?: TabMouseEvent;
-    onTabMouseDown?: TabMouseEvent;
+    onTabMouseUp?: TabMouseEvent;
     onTabCloseClick?: TabMouseEvent;
     onTabAddClick?: TablessMouseEvent;
 }
@@ -131,7 +134,9 @@ export class Tabs extends PureComponent<TabsProps, TabsState> {
     }
 
     public render(): ReactElement {
-        return (<div className="tabs">
+        const {className} = this.props;
+
+        return (<div className={classNames("tabs", className)}>
             {this.renderHeaders()}
             {this.renderPanel()}
         </div>);
@@ -149,7 +154,7 @@ export class Tabs extends PureComponent<TabsProps, TabsState> {
     };
 
     protected renderHeaders(): ReactElement {
-        const {canAddTabs, onTabClick, onTabMouseDown, onTabCloseClick, onTabAddClick} = this.props;
+        const {canAddTabs, onTabClick, onTabMouseUp, onTabCloseClick, onTabAddClick} = this.props;
         const {activeTab} = this.state;
 
         return (<div className="tabs__tab-headers clearfix">
@@ -160,7 +165,7 @@ export class Tabs extends PureComponent<TabsProps, TabsState> {
                             {...tab.props}
                             active={activeTab === tab.props.id}
                             onTabClick={onTabClick || this.onTabClick}
-                            onTabMouseDown={onTabMouseDown}
+                            onTabMouseUp={onTabMouseUp}
                             onTabCloseClick={onTabCloseClick || undefined}
                             closable={this.isTabClosable(tab)}
                         />

@@ -7,9 +7,9 @@ import {debounce} from "lodash";
 
 import {Editor} from "@devpanel/components/Editor";
 import {SettingsStoreContext} from "@devpanel/state";
-import {Settings} from "@common/stores/background";
+import {PHPConsoleSettings, SettingsStore} from "@common/stores/settings";
 import {Tab, Tabs} from "@common/components/Tabs";
-import {EditorChangeData} from "@common/stores/panel";
+import {PHPConsole} from "@common/stores/panel";
 
 // eslint-disable-next-line
 export interface PHPConsoleOptionsProps {
@@ -32,14 +32,14 @@ export class PHPConsoleOptions extends PureComponent<PHPConsoleOptionsProps, PHP
         super(props);
 
         this.setEditorContents = debounce((type, data): void => {
-            const phpConsole = (this.context as Instance<typeof Settings>).phpConsole;
+            const phpConsole = this.getContextData();
 
             phpConsole.setTabContents(type, data);
         }, 500);
     }
 
     public render(): ReactElement {
-        const {prologue, epilogue} = (this.context as Instance<typeof Settings>).phpConsole;
+        const {prologue, epilogue} = (this.context as Instance<typeof SettingsStore>).phpConsole;
 
         return (
             <div className="php-console-options">
@@ -67,5 +67,9 @@ export class PHPConsoleOptions extends PureComponent<PHPConsoleOptionsProps, PHP
                 </Tabs>
             </div>
         );
+    }
+
+    protected getContextData(): Instance<typeof PHPConsoleSettings> {
+        return (this.context as Instance<typeof SettingsStore>).phpConsole;
     }
 }

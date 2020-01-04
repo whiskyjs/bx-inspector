@@ -5,7 +5,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git@gitlab.machaon-dev.ru:machaon/std-frontend.git"
+    "url": "git@github.com:whiskyjs/bx-inspector.git"
   },
   "author": "Alexander Selyuchenko",
   "license": "MIT",
@@ -16,7 +16,10 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx,.vue src tests",
     "check": "npm run test && npm run lint",
     "dev-server": "webpack-dev-server",
-    "release": "webpack --config webpack.production.js"
+    "release": "webpack --config webpack.production.js",
+    "get-schema": "graphql get-schema",
+    "generate-types": "graphql-codegen --config codegen.yml && eslint --fix src/scripts/common/types/graphql.ts",
+    "scaffolding": "node ./scaffolding/run.js"
   },
   "dependencies": {},
   "devDependencies": {
@@ -28,6 +31,14 @@
     "@babel/preset-env": "^7.7.7",
     "@babel/preset-react": "^7.7.4",
     "@babel/preset-typescript": "^7.7.7",
+    "@graphql-codegen/cli": "1.10.0",
+    "@graphql-codegen/fragment-matcher": "1.10.0",
+    "@graphql-codegen/introspection": "1.10.0",
+    "@graphql-codegen/typescript": "1.10.0",
+    "@graphql-codegen/typescript-document-nodes": "1.10.0",
+    "@graphql-codegen/typescript-graphql-files-modules": "1.10.0",
+    "@graphql-codegen/typescript-operations": "1.10.0",
+    "@graphql-codegen/typescript-react-apollo": "1.10.0",
     "@types/classnames": "^2.2.9",
     "@types/core-js": "^2.5.2",
     "@types/jest": "^24.0.25",
@@ -43,6 +54,7 @@
     "@types/vue": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^2.14.0",
     "@typescript-eslint/parser": "^2.14.0",
+    "apollo-boost": "^0.4.7",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "babel-preset-typescript-vue": "^1.0.3",
@@ -58,6 +70,10 @@
     "eslint-plugin-react-hooks": "^2.3.0",
     "eslint-plugin-vue": "^5.2.3",
     "extra-watch-webpack-plugin": "^1.0.3",
+    "flexboxgrid": "^6.3.1",
+    "graphql": "^14.5.8",
+    "graphql-cli": "^3.0.14",
+    "graphql-tag": "^2.10.1",
     "husky": "^3.1.0",
     "jest": "^24.9.0",
     "jquery": "^3.4.1",
@@ -81,6 +97,7 @@
     "react-dom": "^16.12.0",
     "react-monaco-editor": "^0.32.1",
     "react-split-pane": "^0.1.89",
+    "react-toastify": "^5.5.0",
     "sass-loader": "^8.0.0",
     "style-loader": "^1.1.2",
     "stylelint": "^11.1.1",

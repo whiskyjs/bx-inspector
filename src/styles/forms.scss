@@ -1,0 +1,29 @@
+//noinspection CssUnknownTarget
+@import "variables";
+
+form {
+    background-color: $hover-background-color;
+
+    * {
+        font-size: 12px;
+    }
+}
+
+.form-group {
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+}
+
+.form-group__label {
+    display: block;
+}
+
+.form-group__input {
+    margin-left: 10px;
+    display: block;
+    flex: 1;
+    padding: 8px 4px;
+}

@@ -99,7 +99,12 @@ const config = {
             },
             {
                 test: /\.vue$/,
-                loader: "vue-loader"
+                loader: "vue-loader",
+            },
+            {
+                test: /\.(graphql|gql)$/,
+                exclude: /node_modules/,
+                loader: "graphql-tag/loader",
             }
         ],
     },
@@ -140,7 +145,7 @@ const config = {
         ),
 
         new ExtraWatchWebpackPlugin({
-            dirs: ["src/pages"],
+            dirs: ["src/partials"],
         }),
 
         new MiniCssExtractPlugin({
@@ -149,7 +154,7 @@ const config = {
         }),
 
         new NunjucksWebpackPlugin({
-            templates: fs.readdirSync(resolve(__dirname, "./src/pages"))
+            templates: fs.readdirSync(resolve(__dirname, "./src/partials"))
                 .reduce((acc, file) => {
                     const matches = file.match(/^([a-zA-Z0-9][a-zA-Z0-9_-]+)\.njk/);
 
@@ -194,7 +199,7 @@ const config = {
             "@styles": resolve(__dirname, "src/styles"),
         },
 
-        extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".less", ".vue", ".json"],
+        extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".less", ".vue", ".json", ".graphql"],
     },
 };
 

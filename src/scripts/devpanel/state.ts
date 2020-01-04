@@ -1,12 +1,17 @@
 import React from "react";
 
 import {PanelStore} from "@common/stores/panel";
-import {defaultPanel} from "@common/state/panel";
-import {Settings} from "@common/stores/background";
-import {defaultSettings} from "@common/state/settings";
+import {SettingsStore} from "@common/stores/settings";
+import {defaultPanelStore} from "@common/state/panel";
+import {defaultSettingsStore} from "@common/state/settings";
+import {FlagStore} from "@common/stores/flags";
+import {defaultFlagStore} from "@common/state/flags";
 
-export const panelStore = PanelStore.create(defaultPanel);
-export const settingsStore = Settings.create(defaultSettings);
-
+export const panelStore = PanelStore.create(defaultPanelStore);
 export const PanelStoreContext = React.createContext(panelStore);
+
+export const settingsStore = SettingsStore.create(defaultSettingsStore);
 export const SettingsStoreContext = React.createContext(settingsStore);
+
+export const flagStore = FlagStore.create(defaultFlagStore);
+export const FlagStoreContext = React.createContext(flagStore);

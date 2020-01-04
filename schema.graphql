@@ -1,0 +1,48 @@
+# source: http://blank-1.local/bitrix/tools/wjs_api_graphql.php
+# timestamp: Wed Jan 08 2020 20:55:15 GMT+0300 (Moscow Standard Time)
+
+"""
+Язык, произвольное выражение на котором сможет выполнить (вычислить) сервер.
+"""
+enum EvaluationLanguage {
+  """PHP"""
+  PHP
+
+  """SQL"""
+  SQL
+}
+
+type EvaluationResult {
+  output: String!
+  result: String!
+}
+
+type Group {
+  ID: ID!
+  NAME: String
+  USERS: [User]
+}
+
+input GroupFilterInput {
+  ID: ID
+  NAME: String
+}
+
+type Query {
+  user(by: String = "ID", order: String = "ASC", filter: UserFilterInput = {}): User
+  group(by: String = "ID", order: String = "ASC", filter: GroupFilterInput = {}): Group
+  version: String
+  evaluate(language: EvaluationLanguage!, source: String!): EvaluationResult
+}
+
+type User {
+  ID: ID!
+  LOGIN: String!
+  EMAIL: String!
+  GROUPS: [Group]
+}
+
+input UserFilterInput {
+  ID: ID
+  NAME: String
+}

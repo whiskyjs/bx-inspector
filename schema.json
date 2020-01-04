@@ -1,0 +1,376 @@
+{
+  "kind": "Document",
+  "definitions": [
+    {
+      "kind": "SchemaDefinition",
+      "directives": [],
+      "operationTypes": [
+        {
+          "kind": "OperationTypeDefinition",
+          "operation": "query",
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "QueryType",
+              "loc": {
+                "start": 153,
+                "end": 162
+              }
+            },
+            "loc": {
+              "start": 153,
+              "end": 162
+            }
+          },
+          "loc": {
+            "start": 146,
+            "end": 162
+          }
+        }
+      ],
+      "loc": {
+        "start": 135,
+        "end": 164
+      }
+    },
+    {
+      "kind": "EnumTypeDefinition",
+      "description": {
+        "kind": "StringValue",
+        "value": "Язык, произвольное выражение на котором сможет выполнить (вычислить) сервер.",
+        "block": true,
+        "loc": {
+          "start": 166,
+          "end": 250
+        }
+      },
+      "name": {
+        "kind": "Name",
+        "value": "EvaluationLanguageType",
+        "loc": {
+          "start": 256,
+          "end": 278
+        }
+      },
+      "directives": [],
+      "values": [
+        {
+          "kind": "EnumValueDefinition",
+          "description": {
+            "kind": "StringValue",
+            "value": "PHP",
+            "block": true,
+            "loc": {
+              "start": 283,
+              "end": 292
+            }
+          },
+          "name": {
+            "kind": "Name",
+            "value": "PHP",
+            "loc": {
+              "start": 295,
+              "end": 298
+            }
+          },
+          "directives": [],
+          "loc": {
+            "start": 283,
+            "end": 298
+          }
+        },
+        {
+          "kind": "EnumValueDefinition",
+          "description": {
+            "kind": "StringValue",
+            "value": "SQL",
+            "block": true,
+            "loc": {
+              "start": 302,
+              "end": 311
+            }
+          },
+          "name": {
+            "kind": "Name",
+            "value": "SQL",
+            "loc": {
+              "start": 314,
+              "end": 317
+            }
+          },
+          "directives": [],
+          "loc": {
+            "start": 302,
+            "end": 317
+          }
+        }
+      ],
+      "loc": {
+        "start": 166,
+        "end": 319
+      }
+    },
+    {
+      "kind": "ObjectTypeDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "EvaluationResultType",
+        "loc": {
+          "start": 326,
+          "end": 346
+        }
+      },
+      "interfaces": [],
+      "directives": [],
+      "fields": [
+        {
+          "kind": "FieldDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "output",
+            "loc": {
+              "start": 351,
+              "end": 357
+            }
+          },
+          "arguments": [],
+          "type": {
+            "kind": "NonNullType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "String",
+                "loc": {
+                  "start": 359,
+                  "end": 365
+                }
+              },
+              "loc": {
+                "start": 359,
+                "end": 365
+              }
+            },
+            "loc": {
+              "start": 359,
+              "end": 366
+            }
+          },
+          "directives": [],
+          "loc": {
+            "start": 351,
+            "end": 366
+          }
+        },
+        {
+          "kind": "FieldDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "result",
+            "loc": {
+              "start": 369,
+              "end": 375
+            }
+          },
+          "arguments": [],
+          "type": {
+            "kind": "NonNullType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "String",
+                "loc": {
+                  "start": 377,
+                  "end": 383
+                }
+              },
+              "loc": {
+                "start": 377,
+                "end": 383
+              }
+            },
+            "loc": {
+              "start": 377,
+              "end": 384
+            }
+          },
+          "directives": [],
+          "loc": {
+            "start": 369,
+            "end": 384
+          }
+        }
+      ],
+      "loc": {
+        "start": 321,
+        "end": 386
+      }
+    },
+    {
+      "kind": "ObjectTypeDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "QueryType",
+        "loc": {
+          "start": 393,
+          "end": 402
+        }
+      },
+      "interfaces": [],
+      "directives": [],
+      "fields": [
+        {
+          "kind": "FieldDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "version",
+            "loc": {
+              "start": 407,
+              "end": 414
+            }
+          },
+          "arguments": [],
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String",
+              "loc": {
+                "start": 416,
+                "end": 422
+              }
+            },
+            "loc": {
+              "start": 416,
+              "end": 422
+            }
+          },
+          "directives": [],
+          "loc": {
+            "start": 407,
+            "end": 422
+          }
+        },
+        {
+          "kind": "FieldDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "evaluate",
+            "loc": {
+              "start": 425,
+              "end": 433
+            }
+          },
+          "arguments": [
+            {
+              "kind": "InputValueDefinition",
+              "name": {
+                "kind": "Name",
+                "value": "language",
+                "loc": {
+                  "start": 434,
+                  "end": 442
+                }
+              },
+              "type": {
+                "kind": "NonNullType",
+                "type": {
+                  "kind": "NamedType",
+                  "name": {
+                    "kind": "Name",
+                    "value": "EvaluationLanguageType",
+                    "loc": {
+                      "start": 444,
+                      "end": 466
+                    }
+                  },
+                  "loc": {
+                    "start": 444,
+                    "end": 466
+                  }
+                },
+                "loc": {
+                  "start": 444,
+                  "end": 467
+                }
+              },
+              "directives": [],
+              "loc": {
+                "start": 434,
+                "end": 467
+              }
+            },
+            {
+              "kind": "InputValueDefinition",
+              "name": {
+                "kind": "Name",
+                "value": "source",
+                "loc": {
+                  "start": 469,
+                  "end": 475
+                }
+              },
+              "type": {
+                "kind": "NonNullType",
+                "type": {
+                  "kind": "NamedType",
+                  "name": {
+                    "kind": "Name",
+                    "value": "String",
+                    "loc": {
+                      "start": 477,
+                      "end": 483
+                    }
+                  },
+                  "loc": {
+                    "start": 477,
+                    "end": 483
+                  }
+                },
+                "loc": {
+                  "start": 477,
+                  "end": 484
+                }
+              },
+              "directives": [],
+              "loc": {
+                "start": 469,
+                "end": 484
+              }
+            }
+          ],
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "EvaluationResultType",
+              "loc": {
+                "start": 487,
+                "end": 507
+              }
+            },
+            "loc": {
+              "start": 487,
+              "end": 507
+            }
+          },
+          "directives": [],
+          "loc": {
+            "start": 425,
+            "end": 507
+          }
+        }
+      ],
+      "loc": {
+        "start": 388,
+        "end": 509
+      }
+    }
+  ],
+  "loc": {
+    "start": 0,
+    "end": 510
+  }
+}

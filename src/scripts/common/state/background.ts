@@ -1,6 +1,6 @@
-import {defaultSettings} from "@common/state/settings";
+import {defaultSettingsStore} from "@common/state/settings";
 
 export const defaultBackgroundStore = {
     sites: {},
-    settings: defaultSettings,
+    settings: defaultSettingsStore,
 };

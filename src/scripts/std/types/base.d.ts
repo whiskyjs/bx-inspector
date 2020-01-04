@@ -1,13 +1,19 @@
-interface SingletonInstanceStorage {
-    [klass: string]: InstanceType<any>;
-}
+import {Singleton} from "@std/base/Singleton";
 
-type JsonValue = boolean | number | string | null | JsonArray | JsonMap;
+declare global {
+    type SingletonInstanceType<T extends Singleton = Singleton> = T extends new () => infer R ? R : Singleton;
 
-interface JsonMap {
-    [key: string]: JsonValue;
-}
+    interface SingletonInstanceStorage {
+        [klass: string]: SingletonInstanceType<Singleton>;
+    }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface JsonArray extends Array<JsonValue> {
+    type JsonValue = boolean | number | string | null | JsonArray | JsonMap;
+
+    interface JsonMap {
+        [key: string]: JsonValue;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
+    interface JsonArray extends Array<JsonValue> {
+    }
 }

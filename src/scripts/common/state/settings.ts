@@ -1,4 +1,4 @@
-export const defaultSettings = {
+export const defaultSettingsStore = {
     phpConsole: {
         prologue: {
             contents: "<?php\n\n",
@@ -8,5 +8,10 @@ export const defaultSettings = {
             contents: "<?php\n\n",
             viewState: "",
         },
+    },
+    common: {
+        networking: {
+            endpoint: "/bitrix/scaffolding/wjs_api_graphql.php",
+        }
     }
 };

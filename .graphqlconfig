@@ -1,0 +1,20 @@
+{
+  "projects": {
+    "WJS.API Schema": {
+      "name": "WJS.API Schema",
+      "schemaPath": "schema.graphql",
+      "extensions": {
+        "endpoints": {
+          "WJS.API Endoint": {
+            "url": "http://blank-1.local/bitrix/tools/wjs_api_graphql.php",
+            "headers": {
+              "user-agent": "JS GraphQL",
+              "cookie": "XDEBUG_SESSION=1"
+            },
+            "introspect": false
+          }
+        }
+      }
+    }
+  }
+}

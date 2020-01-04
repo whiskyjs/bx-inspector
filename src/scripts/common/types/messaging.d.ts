@@ -1,27 +1,12 @@
-import {ReactElement} from "react";
-import {Instance} from "mobx-state-tree";
 import {Runtime} from "webextension-polyfill-ts";
-
-import {App} from "@std/app";
+import {Instance} from "mobx-state-tree";
 import {PanelStore} from "@common/stores/panel";
-import {Settings} from "@common/stores/background";
+import {SettingsStore} from "@common/stores/settings";
+import {FlagStore} from "@common/stores/flags";
+import {DocumentNode} from "graphql";
+import {TypeScriptOperationVariablesToObject} from "@graphql-codegen/typescript";
 
 declare global {
-    interface Window {
-        App: App;
-        config: JsonMap;
-    }
-
-    type GenericObject = {
-        [key: string]: any;
-    };
-
-    type Optional<T> = T | undefined;
-
-    type Renderable = ReactElement | (() => ReactElement);
-    type RenderBlock = [Optional<boolean>, Optional<Renderable>];
-    type RenderBlocks = Array<RenderBlock>;
-
     interface RuntimeConnection {
         tabId: number;
         hostname?: string;
@@ -57,13 +42,24 @@ declare global {
 
     interface SetSettingsMessage {
         action: "set-settings";
-        data: Instance<typeof Settings>;
+        data: Instance<typeof SettingsStore>;
     }
 
     interface PropagateSettingsMessage {
         action: "propagate-settings";
         tabId: number;
-        data: Instance<typeof Settings>;
+        data: Instance<typeof SettingsStore>;
+    }
+
+    interface SetFlagsMessage {
+        action: "set-flags";
+        data: Instance<typeof FlagStore>;
+    }
+
+    interface PropagateFlagsMessage {
+        action: "propagate-flags";
+        tabId: number;
+        data: Instance<typeof FlagStore>;
     }
 
     interface NavigationStartMessage {
@@ -82,11 +78,14 @@ declare global {
         | PropagateHostDataMessage
         | SetSettingsMessage
         | PropagateSettingsMessage
+        | SetFlagsMessage
+        | PropagateFlagsMessage
         | NavigationStartMessage
         | NavigationEndMessage;
 
     interface GenericPageInfo {
         origin: string;
+        protocol: string;
         hostname: string;
         pathname: string;
         href: string;
@@ -96,4 +95,3 @@ declare global {
         language: string;
     }
 }
-

@@ -1,17 +1,30 @@
 import {Instance, types} from "mobx-state-tree";
 import uuid from "uuid";
-import {editor} from "monaco-editor";
-
-export interface EditorChangeData {
-    contents?: string;
-    viewState?: editor.ICodeEditorViewState;
-}
 
 export const PHPEditor = types.model("PHPEditor", {
     uuid: types.optional(types.string, () => uuid.v4()),
     title: types.optional(types.string, () => "Редактор"),
     contents: types.optional(types.string, "<?php\n\n"),
     viewState: types.optional(types.string, ""),
+    message: types.optional(types.string, ""),
+}).actions((self) => {
+    return {
+        setContents(data: EditorChangeData): void {
+            const {contents, viewState, message} = data;
+
+            if (Object.prototype.hasOwnProperty.call(data, "contents")) {
+                self.contents = contents || "";
+            }
+
+            if (Object.prototype.hasOwnProperty.call(data, "viewState")) {
+                self.viewState = JSON.stringify(viewState);
+            }
+
+            if (Object.prototype.hasOwnProperty.call(data, "message")) {
+                self.message = message || "";
+            }
+        },
+    };
 });
 
 export const PHPEditors = types.model("PHPEditors", {
@@ -39,17 +52,10 @@ export const PHPEditors = types.model("PHPEditors", {
             return false;
         },
         setTabContents(tabId: string, data: EditorChangeData): boolean {
-            const {contents, viewState} = data;
             const tabIndex = self.tabs.findIndex((tab) => tab.uuid === tabId);
 
             if (~tabIndex) {
-                if (contents) {
-                    self.tabs[tabIndex].contents = contents;
-                }
-
-                if (viewState) {
-                    self.tabs[tabIndex].viewState = JSON.stringify(viewState);
-                }
+                self.tabs[tabIndex].setContents(data);
 
                 return true;
             }
@@ -63,6 +69,21 @@ export const PHPResult = types.model("PHPResult", {
     uuid: types.optional(types.string, () => uuid.v4()),
     title: types.optional(types.string, () => "Результат"),
     contents: types.optional(types.string, ""),
+    message: types.optional(types.string, ""),
+}).actions((self) => {
+    return {
+        setContents(data: EditorChangeData): void {
+            const {contents, message} = data;
+
+            if (Object.prototype.hasOwnProperty.call(data, "contents")) {
+                self.contents = contents || "";
+            }
+
+            if (Object.prototype.hasOwnProperty.call(data, "message")) {
+                self.message = message || "";
+            }
+        },
+    };
 });
 
 export const PHPResults = types.model("PHPResults", {
@@ -89,11 +110,11 @@ export const PHPResults = types.model("PHPResults", {
 
             return false;
         },
-        setTabContents(tabId: string, contents: string): boolean {
+        setTabContents(tabId: string, data: EditorChangeData): boolean {
             const tabIndex = self.tabs.findIndex((tab) => tab.uuid === tabId);
 
             if (~tabIndex) {
-                self.tabs[tabIndex].contents = contents;
+                self.tabs[tabIndex].setContents(data);
 
                 return true;
             }
