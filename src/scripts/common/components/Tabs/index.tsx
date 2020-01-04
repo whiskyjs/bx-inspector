@@ -64,7 +64,7 @@ export interface TabsProps {
 
 export interface TabsState {
     activeTab?: string;
-    previousTab?: string;
+    activeTabIndex: number;
     inTransition: boolean;
 }
 
@@ -76,31 +76,30 @@ export class Tabs extends PureComponent<TabsProps, TabsState> {
 
     public static getDerivedStateFromProps(props: TabsProps, state: TabsState): TabsState {
         const {activeTab: activeTabProps} = props;
-        const {activeTab: activeTabState} = state;
+        const {activeTab: activeTabState, activeTabIndex} = state;
+        const tabs = Tabs.getTabs(props);
 
         if (activeTabProps && (activeTabProps !== activeTabState)) {
-            Object.assign(state, {
-                activeTab: activeTabProps,
-                previousTab: activeTabState,
+            state.activeTabIndex = findIndex(tabs, (child: Tab) => {
+                return child.props.id === activeTabProps;
             });
-        } else if (!activeTabProps) {
-            const {activeTab: prevActiveTab} = state;
-            const tabs = Tabs.getTabs(props);
+            state.activeTab = activeTabProps;
+        } else if (tabs) {
+            const currentTabIndex = findIndex(tabs, (child: Tab) => {
+                return child.props.id === activeTabState;
+            });
 
-            if (!tabs) {
-                Object.assign(state, {
-                    activeTab: undefined,
-                });
+            if (~currentTabIndex) {
+                state.activeTabIndex = currentTabIndex;
+                state.activeTab = tabs[currentTabIndex].props.id;
+            } else if (~activeTabIndex) {
+                state.activeTabIndex = activeTabIndex < tabs.length
+                    ? activeTabIndex
+                    : tabs.length - 1;
+                state.activeTab = tabs[state.activeTabIndex].props.id;
             } else {
-                const currentTabIndex = findIndex(tabs, (child: Tab) => {
-                    return child.props.id === prevActiveTab;
-                });
-
-                if (!~currentTabIndex || (currentTabIndex >= tabs.length)) {
-                    Object.assign(state, {
-                        activeTab: tabs[tabs.length - 1].props.id,
-                    })
-                }
+                state.activeTabIndex = 0;
+                state.activeTab = tabs[0].props.id;
             }
         }
 
@@ -126,7 +125,7 @@ export class Tabs extends PureComponent<TabsProps, TabsState> {
 
         this.state = {
             activeTab: props.activeTab || (firstTab && firstTab.props.id),
-            previousTab: undefined,
+            activeTabIndex: firstTab ? 0 : -1,
             inTransition: false,
         };
     }
@@ -139,15 +138,13 @@ export class Tabs extends PureComponent<TabsProps, TabsState> {
     }
 
     protected onTabClick: TabMouseEvent = ({target}, tabId): void => {
-        const {activeTab} = this.state;
-
         if ((target instanceof HTMLElement) && target.matches(".tabs__tab-header-close")) {
             return;
         }
 
         this.setState({
             activeTab: tabId,
-            previousTab: activeTab,
+            activeTabIndex: this.getTabIndex(tabId),
         });
     };
 
@@ -217,6 +214,18 @@ export class Tabs extends PureComponent<TabsProps, TabsState> {
         }
 
         return find(tabs, (tab: Tab) => {
+            return tab.props.id === tabId;
+        });
+    }
+
+    protected getTabIndex(tabId: Optional<string> = this.state.activeTab): number {
+        const tabs = Tabs.getTabs(this.props);
+
+        if (!tabId || !tabs) {
+            return -1;
+        }
+
+        return findIndex(tabs, (tab: Tab) => {
             return tab.props.id === tabId;
         });
     }

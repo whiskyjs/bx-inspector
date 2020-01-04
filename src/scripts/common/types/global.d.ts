@@ -23,19 +23,19 @@ declare global {
     type RenderBlocks = Array<RenderBlock>;
 
     interface RuntimeConnection {
-        tabId: string;
+        tabId: number;
         hostname?: string;
         port: Runtime.Port;
     }
 
     interface ConnectMessage {
         action: "connect";
-        tabId: string;
+        tabId: number;
     }
 
     interface ConnectMessage {
         action: "connect";
-        tabId: string;
+        tabId: number;
     }
 
     interface SetHostnameMessage {
@@ -50,7 +50,7 @@ declare global {
 
     interface PropagateHostDataMessage {
         action: "propagate-host-data";
-        tabId: string;
+        tabId: number;
         hostname: string;
         data: Instance<typeof PanelStore>;
     }
@@ -60,10 +60,20 @@ declare global {
         data: Instance<typeof Settings>;
     }
 
-    interface PropagateSettings {
+    interface PropagateSettingsMessage {
         action: "propagate-settings";
-        tabId: string;
+        tabId: number;
         data: Instance<typeof Settings>;
+    }
+
+    interface NavigationStartMessage {
+        action: "navigation-start";
+        url: string;
+    }
+
+    interface NavigationEndMessage {
+        action: "navigation-end";
+        url: string;
     }
 
     type RuntimeMessage = ConnectMessage
@@ -71,7 +81,9 @@ declare global {
         | SetHostDataMessage
         | PropagateHostDataMessage
         | SetSettingsMessage
-        | PropagateSettings;
+        | PropagateSettingsMessage
+        | NavigationStartMessage
+        | NavigationEndMessage;
 
     interface GenericPageInfo {
         origin: string;

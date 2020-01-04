@@ -3,7 +3,7 @@ import "./style.scss";
 import React, {ReactElement, PureComponent} from "react";
 import {Instance, isAlive} from "mobx-state-tree";
 import {observer} from "mobx-react";
-import {debounce} from "lodash";
+import {debounce, findIndex} from "lodash";
 
 import {Tab, TablessMouseEvent, TabMouseEvent, Tabs} from "@common/components/Tabs";
 import {EditorChangeData, PHPEditor, PHPEditors} from "@common/stores/panel";
@@ -16,6 +16,7 @@ export interface PHPConsoleEditorsProps {
 
 // eslint-disable-next-line
 export interface PHPConsoleEditorsState {
+    activeTab: string;
 }
 
 @observer
@@ -35,15 +36,22 @@ export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHP
                 editors.setTabContents(tab.uuid, data);
             }
         }, 500);
+
+        this.state = {
+            activeTab: props.editors.tabs[0].uuid,
+        };
     }
 
     public render(): ReactElement {
         const {editors} = this.props;
+        const {activeTab} = this.state;
 
         return (
             <div className="php-console-editors">
                 <Tabs
+                    activeTab={activeTab}
                     canAddTabs={true}
+                    onTabClick={this.onTabClick}
                     canCloseTabs={editors.tabs.length > 1}
                     onTabCloseClick={this.onTabCloseClick}
                     onTabAddClick={this.onTabAddClick}
@@ -63,14 +71,31 @@ export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHP
 
     protected onTabCloseClick: TabMouseEvent = (e, tabId) => {
         const {editors} = this.props;
+        const prevTabindex = findIndex(editors.tabs, (tab) => {
+            return tab.uuid === tabId;
+        });
 
         editors.deleteTab(tabId);
+
+        this.setState({
+            activeTab: editors.tabs[editors.tabs.length > prevTabindex
+                ? prevTabindex
+                : editors.tabs.length - 1].uuid,
+        });
     };
 
     protected onTabAddClick: TablessMouseEvent = () => {
         const {editors} = this.props;
 
-        editors.addTab();
+        this.setState({
+            activeTab: editors.addTab(),
+        });
+    };
+
+    protected onTabClick: TabMouseEvent = (e, tabId) => {
+        this.setState({
+            activeTab: tabId,
+        });
     };
 
     protected getEditorPanel = (tab: Instance<typeof PHPEditor>): Renderable => {

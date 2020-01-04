@@ -53,30 +53,49 @@ export class App extends StdApp {
             tabId: browser.devtools.inspectedWindow.tabId,
         });
 
-        this.pageInfo = await this.getInspectedPageData();
-
-        this.port.postMessage({
-            action: "set-hostname",
-            hostname: this.pageInfo.hostname,
-        });
+        this.fetchPageInfo();
 
         return true;
+    }
+
+    protected async fetchPageInfo(): Promise<GenericPageInfo> {
+        this.pageInfo = await this.getInspectedPageData();
+
+        if (this.pageInfo) {
+            this.port?.postMessage({
+                action: "set-hostname",
+                hostname: this.pageInfo.hostname,
+            });
+        }
+
+        return this.pageInfo;
     }
 
     private onPortMessage = (message: RuntimeMessage): void => {
         console.log("DevPanel. Got message:", message);
 
         switch (message.action) {
-            case "set-host-data":
+            case "set-host-data": {
                 this.setPropagateStores(false);
                 applySnapshot(panelStore, message.data);
                 this.setPropagateStores(true);
                 break;
-            case "set-settings":
+            }
+            case "set-settings": {
                 this.setPropagateStores(false);
                 applySnapshot(settingsStore, message.data);
                 this.setPropagateStores(true);
                 break;
+            }
+            case "navigation-end": {
+                const url = new URL(message.url);
+
+                if (url.hostname !== this.pageInfo?.hostname) {
+                    this.fetchPageInfo();
+                }
+
+                break;
+            }
         }
     };
 
@@ -90,9 +109,11 @@ export class App extends StdApp {
 
     private setStoreEventHandlers(): void {
         onSnapshot(panelStore, (snapshot) => {
-            console.log(browser.devtools.inspectedWindow.tabId, "handleStoreSnapshots()", "onSnapshot()");
+            console.log("panelStore::onSnapshot()", browser.devtools.inspectedWindow.tabId, snapshot);
 
             if (this.propagateStores) {
+                console.log("panelStore: propagating", browser.devtools.inspectedWindow.tabId, snapshot);
+
                 this.port?.postMessage({
                     action: "propagate-host-data",
                     tabId: browser.devtools.inspectedWindow.tabId,
@@ -105,9 +126,11 @@ export class App extends StdApp {
         });
 
         onSnapshot(settingsStore, (snapshot) => {
-            console.log(browser.devtools.inspectedWindow.tabId, "handleStoreSnapshots()", "onSnapshot()");
+            console.log("settingsStore::onSnapshot()", browser.devtools.inspectedWindow.tabId, snapshot);
 
             if (this.propagateStores) {
+                console.log("settingsStore: propagating", browser.devtools.inspectedWindow.tabId, snapshot);
+
                 this.port?.postMessage({
                     action: "propagate-settings",
                     tabId: browser.devtools.inspectedWindow.tabId,

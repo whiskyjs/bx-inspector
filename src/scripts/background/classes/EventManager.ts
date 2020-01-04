@@ -1,4 +1,4 @@
-import {browser} from "webextension-polyfill-ts";
+import {browser, Runtime, WebNavigation} from "webextension-polyfill-ts";
 import {find, remove, filter} from "lodash";
 
 import {Singleton} from "@std/base/Singleton";
@@ -14,10 +14,11 @@ export class EventManager extends Singleton {
     protected panelConnections: Array<RuntimeConnection> = [];
 
     public listen(): void {
-        this.listenToPanels();
+        this.handleConnections();
+        this.handleBrowserEveents();
     }
 
-    protected listenToPanels(): void {
+    protected handleConnections(): void {
         browser.runtime.onConnect.addListener((port) => {
             console.log("onConnect()", port);
 
@@ -36,7 +37,7 @@ export class EventManager extends Singleton {
                             hostname: undefined,
                         });
 
-                        port.postMessage({
+                        this.postMessage(port, {
                             action: "set-settings",
                             // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
                             // @ts-ignore
@@ -58,7 +59,7 @@ export class EventManager extends Singleton {
                                 backgroundStore.setSiteData(connection.hostname, PanelStore.create(defaultPanel));
                             }
 
-                            port.postMessage({
+                            this.postMessage(port, {
                                 action: "set-host-data",
                                 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
                                 // @ts-ignore
@@ -82,7 +83,7 @@ export class EventManager extends Singleton {
 
                         if (Array.isArray(connections) && connections.length) {
                             for (const connection of connections) {
-                                connection.port.postMessage({
+                                this.postMessage(connection.port, {
                                     action: "set-host-data",
                                     data: message.data,
                                 });
@@ -102,8 +103,8 @@ export class EventManager extends Singleton {
                         console.log("Other tabs:", connections);
 
                         if (Array.isArray(connections) && connections.length) {
-                            for (const connection of this.panelConnections) {
-                                connection.port.postMessage({
+                            for (const connection of connections) {
+                                this.postMessage(connection.port, {
                                     action: "set-settings",
                                     data: message.data,
                                 });
@@ -135,5 +136,41 @@ export class EventManager extends Singleton {
                 port.onMessage.removeListener(extensionListener);
             });
         });
+    }
+
+    protected handleBrowserEveents(): void {
+        const onBeforeNavigate = (data: WebNavigation.OnBeforeNavigateDetailsType) => {
+            const connection = find(this.panelConnections, (connection) => {
+                return connection.tabId === data.tabId;
+            });
+
+            if (connection) {
+                this.postMessage(connection.port, {
+                    action: "navigation-start",
+                    url: data.url,
+                });
+            }
+        };
+
+        const onNavigationEnd = (data: WebNavigation.OnCompletedDetailsType) => {
+            const connection = find(this.panelConnections, (connection) => {
+                return connection.tabId === data.tabId;
+            });
+
+            if (connection) {
+                this.postMessage(connection.port, {
+                    action: "navigation-end",
+                    url: data.url,
+                });
+            }
+        };
+
+        browser.webNavigation.onBeforeNavigate.addListener(onBeforeNavigate);
+        browser.webNavigation.onCompleted.addListener(onNavigationEnd);
+        browser.webNavigation.onErrorOccurred.addListener(onNavigationEnd);
+    }
+
+    protected postMessage(port: Runtime.Port, message: RuntimeMessage) {
+        port.postMessage(message);
     }
 }

@@ -5,16 +5,14 @@ import {Instance} from "mobx-state-tree";
 import {observer} from "mobx-react";
 import {debounce} from "lodash";
 
-import {PHPConsoleSettings, PHPFixedEditor, Settings} from "@common/stores/background";
-import {Tab, Tabs} from "@common/components/Tabs";
 import {Editor} from "@devpanel/components/Editor";
 import {SettingsStoreContext} from "@devpanel/state";
+import {Settings} from "@common/stores/background";
+import {Tab, Tabs} from "@common/components/Tabs";
 import {EditorChangeData} from "@common/stores/panel";
 
 // eslint-disable-next-line
 export interface PHPConsoleOptionsProps {
-    prologue: Instance<typeof PHPFixedEditor>;
-    epilogue: Instance<typeof PHPFixedEditor>;
 }
 
 // eslint-disable-next-line
@@ -34,14 +32,14 @@ export class PHPConsoleOptions extends PureComponent<PHPConsoleOptionsProps, PHP
         super(props);
 
         this.setEditorContents = debounce((type, data): void => {
-            const phpConsole = this.getStoreFromContext();
+            const phpConsole = (this.context as Instance<typeof Settings>).phpConsole;
 
             phpConsole.setTabContents(type, data);
         }, 500);
     }
 
     public render(): ReactElement {
-        const {prologue, epilogue} = this.getStoreFromContext();
+        const {prologue, epilogue} = (this.context as Instance<typeof Settings>).phpConsole;
 
         return (
             <div className="php-console-options">
@@ -49,29 +47,25 @@ export class PHPConsoleOptions extends PureComponent<PHPConsoleOptionsProps, PHP
                     <Tab
                         id="prologue"
                         title="Пролог"
-                        panel={(): ReactElement => (<Editor
+                        panel={<Editor
                             value={prologue.contents}
                             viewState={prologue.viewState}
                             onChange={(data): void => this.setEditorContents("prologue", data)}
                             key="prologue"
-                        />)}
+                        />}
                     />
                     <Tab
                         id="epilogue"
                         title="Эпилог"
-                        panel={(): ReactElement => (<Editor
+                        panel={<Editor
                             onChange={(data): void => this.setEditorContents("epilogue", data)}
                             value={epilogue.contents}
                             viewState={epilogue.viewState}
                             key="epilogue"
-                        />)}
+                        />}
                     />
                 </Tabs>
             </div>
         );
-    }
-
-    protected getStoreFromContext(): Instance<typeof PHPConsoleSettings> {
-        return (this.context as Instance<typeof Settings>).phpConsole;
     }
 }

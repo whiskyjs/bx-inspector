@@ -54,7 +54,7 @@ export class Editor extends PureComponent<EditorProps, EditorState> {
                 this.props.onChange(this.editorChangeData);
                 this.editorChangeData = {};
             }
-        }, 100);
+        }, 500);
     }
 
     protected editorDidMount = (editor: editor.IStandaloneCodeEditor): void => {
