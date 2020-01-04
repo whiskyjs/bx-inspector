@@ -26,4 +26,10 @@
     height: 30px;
     background-color: $background-color;
     border-top: 1px $border-color solid;
+    font-size: 12px;
+    padding-left: 8px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: hidden;
+    line-height: 30px;
 }

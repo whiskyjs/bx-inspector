@@ -1,0 +1,10 @@
+overwrite: true
+schema: "http://blank-1.local/bitrix/tools/wjs_api_graphql.php"
+documents: "src/**/*.graphql"
+generates:
+  src/scripts/common/types/graphql.ts:
+    plugins:
+      - "typescript"
+      # - "typescript-operations"
+      - "typescript-document-nodes"
+      - "fragment-matcher"

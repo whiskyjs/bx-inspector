@@ -1,27 +1,30 @@
 import "./style.scss";
 
-import React, {ReactElement, PureComponent, KeyboardEvent} from "react";
+import React, {Component, KeyboardEvent, ReactElement} from "react";
 import {editor} from "monaco-editor";
 import MonacoEditor from "react-monaco-editor";
-import {collect} from "@common/functions";
 import {debounce} from "lodash";
-import {EditorChangeData} from "@common/stores/panel";
+import {shallowEqual} from "@babel/types";
+
+import {blocks, collect} from "@common/functions";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface EditorProps {
     defaultValue?: string;
     value?: string;
     viewState?: string;
+    message?: string;
     onChange?: (data: EditorChangeData) => void;
+    actions?: ReadonlyArray<editor.IActionDescriptor>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface EditorState {
 }
 
-export class Editor extends PureComponent<EditorProps, EditorState> {
+export class Editor extends Component<EditorProps, EditorState> {
     protected static defaultProps = {
-        defaultValue: "<?php\n\n",
+        defaultValue: "",
     };
 
     protected editor?: editor.IStandaloneCodeEditor;
@@ -34,6 +37,11 @@ export class Editor extends PureComponent<EditorProps, EditorState> {
 
     protected editorChangeData: EditorChangeData = {};
 
+    // eslint-disable-next-line
+    protected active: boolean = false;
+
+    protected activityTimeout?: NodeJS.Timeout;
+
     // eslint-disable-next-line @typescript-eslint/no-inferrable-types
     protected shiftIsDown: boolean = false;
 
@@ -44,6 +52,8 @@ export class Editor extends PureComponent<EditorProps, EditorState> {
             selectOnLineNumbers: true,
             automaticLayout: true,
         };
+
+        this.state = {};
 
         this.onDoubleShift = collect(() => {
             this.editor && this.editor.trigger("Editor", "editor.action.quickCommand", {});
@@ -58,12 +68,19 @@ export class Editor extends PureComponent<EditorProps, EditorState> {
     }
 
     protected editorDidMount = (editor: editor.IStandaloneCodeEditor): void => {
-        const {viewState} = this.props;
+        const {viewState, actions} = this.props;
 
         this.editor = editor;
 
         if (viewState) {
             editor.restoreViewState(JSON.parse(viewState));
+        }
+
+        if (actions) {
+            actions.forEach(action => editor.addAction({
+                ...action,
+                run: (() => action.run(editor))
+            }));
         }
 
         editor.onDidChangeCursorPosition(this.onDidChangeCursorPosition);
@@ -75,6 +92,14 @@ export class Editor extends PureComponent<EditorProps, EditorState> {
         if (this.editor && viewState) {
             this.editor.restoreViewState(JSON.parse(viewState));
         }
+    }
+
+    public shouldComponentUpdate(
+        nextProps: Readonly<EditorProps>,
+        nextState: Readonly<EditorState>
+    ): boolean {
+        return !this.active
+            && (!shallowEqual(nextProps, this.props) || !shallowEqual(nextState, this.state));
     }
 
     protected onKeyDown = (e: KeyboardEvent<HTMLElement>): void => {
@@ -94,6 +119,16 @@ export class Editor extends PureComponent<EditorProps, EditorState> {
     };
 
     protected onChange = ((contents: string): void => {
+        this.active = true;
+
+        if (this.activityTimeout) {
+            clearTimeout(this.activityTimeout);
+        }
+
+        this.activityTimeout = setTimeout(() => {
+            this.active = false;
+        }, 2000);
+
         if (this.onSaveEditorState && this.editor) {
             if ((typeof contents !== "undefined") && contents) {
                 Object.assign(this.editorChangeData, {
@@ -117,7 +152,7 @@ export class Editor extends PureComponent<EditorProps, EditorState> {
     });
 
     public render(): ReactElement {
-        const {defaultValue, value} = this.props;
+        const {defaultValue, value, message} = this.props;
 
         return (
             <div className="editor">
@@ -136,7 +171,11 @@ export class Editor extends PureComponent<EditorProps, EditorState> {
                         editorDidMount={this.editorDidMount}
                     />
                 </div>
-                <div className="editor__footer"></div>
+                <div className="editor__footer">
+                    {blocks([
+                        [!!message, <>Результат: {message}</>]
+                    ])}
+                </div>
             </div>
         );
     }

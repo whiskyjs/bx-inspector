@@ -2,7 +2,7 @@ export class Singleton {
     protected static instances: SingletonInstanceStorage = {};
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-    protected constructor() {
+    public constructor() {
     }
 
     protected static getClassName(): string
@@ -10,7 +10,7 @@ export class Singleton {
         return this.name;
     }
 
-    public static getInstance(): InstanceType<any> {
+    public static getInstance(): Singleton {
         if (!this.instances[this.getClassName()]) {
             this.instances[this.getClassName()] = new this();
         }

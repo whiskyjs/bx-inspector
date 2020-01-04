@@ -1,7 +1,10 @@
-import {BackgroundStore} from "@common/stores/background";
-import {defaultBackgroundStore} from "@common/state/background";
 import {applySnapshot, onSnapshot} from "mobx-state-tree";
 import localForage from "localforage";
+
+import {BackgroundStore} from "@common/stores/background";
+import {defaultBackgroundStore} from "@common/state/background";
+import {FlagStore} from "@common/stores/flags";
+import {defaultFlagStore} from "@common/state/flags";
 
 localForage.config({
     driver: localForage.INDEXEDDB,
@@ -10,30 +13,32 @@ localForage.config({
 });
 
 const backgroundStore = BackgroundStore.create(defaultBackgroundStore);
+const flagStore = FlagStore.create(defaultFlagStore);
 
-let persistStore = true;
+let persistBackgroundStore = true;
 
-function setPersistStore(persist = true): void {
-    persistStore = persist;
+function setPersistBackgroundStore(persist = true): void {
+    persistBackgroundStore = persist;
 }
 
 onSnapshot(backgroundStore, (snapshot) => {
-    if (persistStore) {
+    if (persistBackgroundStore) {
         localForage.setItem("data", snapshot);
     }
 });
 
-(async(): Promise<any> => {
+(async (): Promise<void> => {
     const snapshot: string = await localForage.getItem("data");
 
     if (snapshot) {
-        setPersistStore(false);
+        setPersistBackgroundStore(false);
         applySnapshot(backgroundStore, snapshot);
-        setPersistStore(true);
+        setPersistBackgroundStore(true);
     }
 })();
 
 export {
     backgroundStore,
-    setPersistStore,
+    flagStore,
+    setPersistBackgroundStore,
 }

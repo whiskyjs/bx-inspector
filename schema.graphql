@@ -1,0 +1,27 @@
+# source: http://blank-1.local/bitrix/tools/wjs_api_graphql.php
+# timestamp: Tue Jan 07 2020 14:25:04 GMT+0300 (Moscow Standard Time)
+
+schema {
+  query: QueryType
+}
+
+"""
+Язык, произвольное выражение на котором сможет выполнить (вычислить) сервер.
+"""
+enum EvaluationLanguageType {
+  """PHP"""
+  PHP
+
+  """SQL"""
+  SQL
+}
+
+type EvaluationResultType {
+  output: String!
+  result: String!
+}
+
+type QueryType {
+  version: String
+  evaluate(language: EvaluationLanguageType!, source: String!): EvaluationResultType
+}

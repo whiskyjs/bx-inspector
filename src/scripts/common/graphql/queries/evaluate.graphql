@@ -1,0 +1,6 @@
+query evaluate($language: EvaluationLanguageType!, $source: String!) {
+    evaluate(language: $language, source: $source) {
+        output
+        result
+    }
+}

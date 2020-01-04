@@ -1,6 +1,7 @@
 export const getGenericPageInfo = `
 ({
     origin: location.origin,
+    protocol: location.protocol,
     hostname: location.hostname,
     pathname: location.pathname,
     href: location.href,

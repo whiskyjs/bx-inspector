@@ -1,17 +1,25 @@
 import "./style.scss";
 
-import React, {ReactElement, PureComponent} from "react";
+import React, {PureComponent, ReactElement} from "react";
 import {Instance, isAlive} from "mobx-state-tree";
 import {observer} from "mobx-react";
 import {debounce, findIndex} from "lodash";
+import {editor, KeyCode, KeyMod} from "monaco-editor";
+import {toast} from "react-toastify";
 
 import {Tab, TablessMouseEvent, TabMouseEvent, Tabs} from "@common/components/Tabs";
-import {EditorChangeData, PHPEditor, PHPEditors} from "@common/stores/panel";
+import {PHPEditor, PHPEditors} from "@common/stores/panel";
 import {Editor} from "@devpanel/components/Editor";
+import {FlagStoreContext} from "@devpanel/state";
+import {FlagStore} from "@common/stores/flags";
+import {Client as GraphClient} from "@common/graphql/client";
+
+import {App} from "@devpanel/app";
 
 // eslint-disable-next-line
 export interface PHPConsoleEditorsProps {
     editors: Instance<typeof PHPEditors>;
+    setActiveResultValue: (output: string, result: string) => void;
 }
 
 // eslint-disable-next-line
@@ -21,6 +29,8 @@ export interface PHPConsoleEditorsState {
 
 @observer
 export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHPConsoleEditorsState> {
+    public static contextType = FlagStoreContext;
+
     protected setEditorContents: (
         tab: Instance<typeof PHPEditor>,
         data: EditorChangeData
@@ -35,7 +45,7 @@ export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHP
             if (isAlive(tab)) {
                 editors.setTabContents(tab.uuid, data);
             }
-        }, 500);
+        }, 0);
 
         this.state = {
             activeTab: props.editors.tabs[0].uuid,
@@ -51,8 +61,9 @@ export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHP
                 <Tabs
                     activeTab={activeTab}
                     canAddTabs={true}
-                    onTabClick={this.onTabClick}
                     canCloseTabs={editors.tabs.length > 1}
+                    onTabClick={this.onTabClick}
+                    onTabMouseUp={this.onTabMouseUp}
                     onTabCloseClick={this.onTabCloseClick}
                     onTabAddClick={this.onTabAddClick}
                 >
@@ -98,12 +109,69 @@ export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHP
         });
     };
 
-    protected getEditorPanel = (tab: Instance<typeof PHPEditor>): Renderable => {
-        return (): ReactElement => (<Editor
+    protected onTabMouseUp: TabMouseEvent = (e, tabId) => {
+        const {editors} = this.props;
+
+        if ((e.button === 1) && (editors.tabs.length > 1)) {
+            this.onTabCloseClick(e, tabId);
+        }
+    };
+
+    protected getEditorPanel = (tab: Instance<typeof PHPEditor>): ReactElement => {
+        return (<Editor
             key={tab.uuid}
             onChange={(data): void => this.setEditorContents(tab, data)}
             value={tab.contents}
             viewState={tab.viewState}
+            actions={this.getActions(tab.uuid)}
         />);
+    };
+
+    // eslint-disable-next-line
+    protected getActions(tabId: string): ReadonlyArray<editor.IActionDescriptor> {
+        return [{
+            id: "wjs.evaluate",
+            label: "Evaluate",
+
+            keybindings: [
+                KeyMod.CtrlCmd | KeyCode.Enter,
+            ],
+
+            run: async (editor: editor.ICodeEditor): Promise<void> => {
+                const {setActiveResultValue} = this.props;
+
+                const client = GraphClient.createClient({
+                    app: App.getInstance() as App,
+                });
+
+                try {
+                    try {
+                        const result = await client.evaluatePhp(editor.getValue());
+
+                        setActiveResultValue(result.output!, result.result!);
+                    } catch (e) {
+                        toast.error(e.message, {
+                            position: "bottom-center",
+                            hideProgressBar: true,
+                            closeButton: false,
+                            autoClose: 2000,
+                        });
+                    }
+                } finally {
+                    client.cancelRequestsActive();
+                }
+            }
+        }];
+    }
+
+    protected getContextData(): Instance<typeof FlagStore> {
+        return this.context as Instance<typeof FlagStore>;
+    }
+
+
+    public getActiveTab(): string {
+        const {activeTab} = this.state;
+
+        return activeTab;
     }
 }

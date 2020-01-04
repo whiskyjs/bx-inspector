@@ -1,12 +1,18 @@
 import "./style.scss";
 
 import React, {ReactElement} from "react";
+import {Instance} from "mobx-state-tree";
+import classNames from "classnames";
+import {observer} from "mobx-react";
 
 import {PHPConsole} from "@devpanel/components/PHPConsole";
 import {About} from "@devpanel/components/About";
 import {Options} from "@devpanel/components/Options";
 
 import {Tab, Tabs} from "@common/components/Tabs";
+import {FlagStoreContext} from "@devpanel/state";
+import {FlagStore} from "@common/stores/flags";
+import {ToastContainer} from "react-toastify";
 
 // eslint-disable-next-line
 export interface DevPanelProps {
@@ -16,14 +22,23 @@ export interface DevPanelProps {
 export interface DevPanelState {
 }
 
+@observer
 export class DevPanel extends React.PureComponent<DevPanelProps, DevPanelState> {
+    public static contextType = FlagStoreContext;
+
     constructor(props: {}) {
         super(props);
     }
 
     public render(): ReactElement {
-        return (
-            <Tabs>
+        const {requests} = this.getContextData();
+
+        return (<React.Fragment>
+            <Tabs
+                className={classNames("dev-panel", {
+                    "dev-panel--disabled": requests.active,
+                })}
+            >
                 <Tab
                     id="php-console"
                     title="Консоль PHP"
@@ -39,7 +54,12 @@ export class DevPanel extends React.PureComponent<DevPanelProps, DevPanelState> 
                     title="О расширении"
                     panel={<About/>}
                 />
-            </Tabs>
-        );
+            </Tabs>,
+            <ToastContainer/>
+        </React.Fragment>);
+    }
+
+    protected getContextData(): Instance<typeof FlagStore> {
+        return this.context as Instance<typeof FlagStore>;
     }
 }

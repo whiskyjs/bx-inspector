@@ -1,18 +1,28 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import {browser, Runtime} from "webextension-polyfill-ts";
-import {applySnapshot, onSnapshot} from "mobx-state-tree";
+import {applySnapshot, Instance, onSnapshot} from "mobx-state-tree";
 
 import {App as StdApp} from "@std/app";
 
 import {DevPanel} from "@devpanel/components/DevPanel";
 import {getGenericPageInfo} from "@devpanel/inspect";
-import {PanelStoreContext, panelStore} from "@devpanel/state";
-import {SettingsStoreContext, settingsStore} from "@devpanel/state";
+import {
+    panelStore,
+    settingsStore,
+    flagStore,
+    PanelStoreContext,
+    SettingsStoreContext,
+    FlagStoreContext
+} from "@devpanel/state";
 
 import metaInfo from "package.json";
 
-export class App extends StdApp {
+import {SettingsStore} from "@common/stores/settings";
+import {FlagStore} from "@common/stores/flags";
+import {PanelStore} from "@common/stores/panel";
+
+export class App extends StdApp implements PanelApp {
     protected port?: Runtime.Port;
 
     protected propagateStores = true;
@@ -33,7 +43,9 @@ export class App extends StdApp {
             ReactDOM.render(
                 <PanelStoreContext.Provider value={panelStore}>
                     <SettingsStoreContext.Provider value={settingsStore}>
-                        <DevPanel/>
+                        <FlagStoreContext.Provider value={flagStore}>
+                            <DevPanel/>
+                        </FlagStoreContext.Provider>
                     </SettingsStoreContext.Provider>
                 </PanelStoreContext.Provider>,
                 document.getElementById("devpanel")
@@ -41,7 +53,7 @@ export class App extends StdApp {
         });
     }
 
-    private async connectToCore(): Promise<boolean> {
+    private async connectToCore(): Promise<void> {
         this.port = browser.runtime.connect(undefined, {
             name: metaInfo.name,
         });
@@ -54,26 +66,26 @@ export class App extends StdApp {
         });
 
         this.fetchPageInfo();
-
-        return true;
     }
 
-    protected async fetchPageInfo(): Promise<GenericPageInfo> {
-        this.pageInfo = await this.getInspectedPageData();
+    protected async fetchPageInfo(): Promise<Optional<GenericPageInfo>> {
+        try {
+            this.pageInfo = await this.getInspectedPageData();
 
-        if (this.pageInfo) {
-            this.port?.postMessage({
-                action: "set-hostname",
-                hostname: this.pageInfo.hostname,
-            });
+            if (this.port) {
+                this.port.postMessage({
+                    action: "set-hostname",
+                    hostname: this.pageInfo.hostname,
+                });
+            }
+        } catch {
+            console.log("Невозможно получить информацию о странице.");
         }
 
         return this.pageInfo;
     }
 
     private onPortMessage = (message: RuntimeMessage): void => {
-        console.log("DevPanel. Got message:", message);
-
         switch (message.action) {
             case "set-host-data": {
                 this.setPropagateStores(false);
@@ -84,6 +96,12 @@ export class App extends StdApp {
             case "set-settings": {
                 this.setPropagateStores(false);
                 applySnapshot(settingsStore, message.data);
+                this.setPropagateStores(true);
+                break;
+            }
+            case "set-flags": {
+                this.setPropagateStores(false);
+                applySnapshot(flagStore, message.data);
                 this.setPropagateStores(true);
                 break;
             }
@@ -108,16 +126,12 @@ export class App extends StdApp {
     }
 
     private setStoreEventHandlers(): void {
-        onSnapshot(panelStore, (snapshot) => {
-            console.log("panelStore::onSnapshot()", browser.devtools.inspectedWindow.tabId, snapshot);
-
+        onSnapshot(panelStore, (snapshot: Instance<typeof PanelStore>) => {
             if (this.propagateStores) {
-                console.log("panelStore: propagating", browser.devtools.inspectedWindow.tabId, snapshot);
-
-                this.port?.postMessage({
+                this.postMessage(this.port, {
                     action: "propagate-host-data",
                     tabId: browser.devtools.inspectedWindow.tabId,
-                    hostname: this.pageInfo?.hostname,
+                    hostname: this.pageInfo?.hostname!,
                     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
                     // @ts-ignore
                     data: snapshot,
@@ -125,14 +139,22 @@ export class App extends StdApp {
             }
         });
 
-        onSnapshot(settingsStore, (snapshot) => {
-            console.log("settingsStore::onSnapshot()", browser.devtools.inspectedWindow.tabId, snapshot);
-
+        onSnapshot(settingsStore, (snapshot: Instance<typeof SettingsStore>) => {
             if (this.propagateStores) {
-                console.log("settingsStore: propagating", browser.devtools.inspectedWindow.tabId, snapshot);
-
-                this.port?.postMessage({
+                this.postMessage(this.port, {
                     action: "propagate-settings",
+                    tabId: browser.devtools.inspectedWindow.tabId,
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+                    // @ts-ignore
+                    data: snapshot,
+                })
+            }
+        });
+
+        onSnapshot(flagStore, (snapshot: Instance<typeof FlagStore>) => {
+            if (this.propagateStores) {
+                this.postMessage(this.port, {
+                    action: "propagate-flags",
                     tabId: browser.devtools.inspectedWindow.tabId,
                     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
                     // @ts-ignore
@@ -144,5 +166,21 @@ export class App extends StdApp {
 
     public setPropagateStores(propagate = true): void {
         this.propagateStores = propagate;
+    }
+
+    protected postMessage(port: Optional<Runtime.Port>, message: RuntimeMessage): void {
+        port!.postMessage(message);
+    }
+
+    public getPageInfo(): Optional<GenericPageInfo> {
+        return this.pageInfo;
+    }
+
+    public getStores(): PanelStoreSet {
+        return {
+            flags: flagStore,
+            settings: settingsStore,
+            panel: panelStore,
+        }
     }
 }

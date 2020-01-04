@@ -8,6 +8,7 @@ const ExtraWatchWebpackPlugin = require("extra-watch-webpack-plugin");
 const NunjucksWebpackPlugin = require("nunjucks-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
+// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 const config = {
     context: resolve(__dirname, "src"),
@@ -99,7 +100,12 @@ const config = {
             },
             {
                 test: /\.vue$/,
-                loader: "vue-loader"
+                loader: "vue-loader",
+            },
+            {
+                test: /\.(graphql|gql)$/,
+                exclude: /node_modules/,
+                loader: "graphql-tag/loader",
             }
         ],
     },
@@ -177,6 +183,8 @@ const config = {
         new MonacoWebpackPlugin({
             languages: ["php"]
         }),
+
+        // new BundleAnalyzerPlugin(),
     ],
 
     resolve: {
@@ -194,7 +202,7 @@ const config = {
             "@styles": resolve(__dirname, "src/styles"),
         },
 
-        extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".less", ".vue", ".json"],
+        extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".less", ".vue", ".json", ".graphql"],
     },
 };
 

@@ -6,6 +6,8 @@
 .sublime-project
 .idea
 
+scratch.graphql
+
 .vagrant
 
 *.log
