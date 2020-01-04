@@ -2,9 +2,8 @@
 @import "@styles/variables.scss";
 
 .editor {
-    display: flex;
-    flex-direction: column;
     flex: 1;
+    position: relative;
 }
 
 .editor__header {
@@ -12,10 +11,18 @@
 }
 
 .editor__input {
-    flex: 1;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 30px;
 }
 
 .editor__footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     height: 30px;
     background-color: $background-color;
     border-top: 1px $border-color solid;
