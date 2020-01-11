@@ -1,11 +1,7 @@
 import ApolloClient, {DocumentNode, InMemoryCache} from "apollo-boost";
 
-import {
-    Evaluate,
-    EvaluationLanguageType,
-    EvaluationResultType, QueryType,
-    QueryTypeEvaluateArgs
-} from "@common/types/graphql";
+import {QueryEvaluate, QueryEvaluateOutbound} from "@common/types/graphql-queries";
+import {QueryEvaluateParams, QueryResponse} from "@common/types/graphql-types";
 
 import {PHPHelper} from "@common/graphql/helpers/php";
 
@@ -47,9 +43,9 @@ export class Client {
         this.app = app;
     }
 
-    public async evaluatePhp(source: string): Promise<EvaluationResultType> {
-        const result = await this.query<QueryType, QueryTypeEvaluateArgs>(Evaluate, {
-            language: EvaluationLanguageType.Php,
+    public async evaluatePhp(source: string): Promise<{}> {
+        const result = await this.query<QueryEvaluateOutbound, QueryEvaluateParams>(QueryEvaluate, {
+            language: "PHP",
             source: PHPHelper.stripWhitespacePhpTags(source),
         });
 
