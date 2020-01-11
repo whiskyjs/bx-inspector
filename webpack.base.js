@@ -6,7 +6,6 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ExtraWatchWebpackPlugin = require("extra-watch-webpack-plugin");
 const NunjucksWebpackPlugin = require("nunjucks-webpack-plugin");
-const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 // const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
@@ -78,29 +77,8 @@ const config = {
                 ],
             },
             {
-                test: /\.less$/,
-                use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                    },
-                    {
-                        loader: "css-loader",
-                        options: {
-                            url: false,
-                        },
-                    },
-                    {
-                        loader: "less-loader",
-                    },
-                ],
-            },
-            {
                 test: /\.css$/,
                 use: ["style-loader", "css-loader"],
-            },
-            {
-                test: /\.vue$/,
-                loader: "vue-loader",
             },
             {
                 test: /\.(graphql|gql)$/,
@@ -178,8 +156,6 @@ const config = {
             $: "jquery",
         }),
 
-        new VueLoaderPlugin(),
-
         new MonacoWebpackPlugin({
             languages: ["php"]
         }),
@@ -202,7 +178,7 @@ const config = {
             "@styles": resolve(__dirname, "src/styles"),
         },
 
-        extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".less", ".vue", ".json", ".graphql"],
+        extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".json", ".graphql"],
     },
 };
 

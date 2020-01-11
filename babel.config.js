@@ -5,7 +5,7 @@ module.exports = {
             corejs: 3,
         }],
         ["@babel/react"],
-        ["babel-preset-typescript-vue"]
+        ["@babel/preset-typescript"],
     ],
     "plugins": [
         ["@babel/plugin-proposal-decorators", {

@@ -4,20 +4,19 @@ module.exports = {
         "es6": true,
         "node": true
     },
-    "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:vue/recommended"],
+    "extends": ["eslint:recommended", "plugin:react/recommended"],
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly",
         "$": "readonly"
     },
-    "parser": "vue-eslint-parser",
     "parserOptions": {
         "parser": "babel-eslint",
         "ecmaFeatures": {"jsx": true},
         "ecmaVersion": 2018,
         "sourceType": "module"
     },
-    "plugins": ["react", "vue", "react-hooks"],
+    "plugins": ["react", "react-hooks"],
     "rules": {
         "max-len": [
             1,
@@ -97,7 +96,7 @@ module.exports = {
     "settings": {"react": {"version": "detect"}},
     "overrides": [
         {
-            "files": ["**/*.ts", "**/*.tsx","**/*.ts.vue"],
+            "files": ["**/*.ts", "**/*.tsx"],
             "env": {
                 "browser": true,
                 "es6": true,
@@ -106,7 +105,6 @@ module.exports = {
             "extends": [
                 "eslint:recommended",
                 "plugin:react/recommended",
-                "plugin:vue/recommended",
                 "plugin:@typescript-eslint/eslint-recommended",
                 "plugin:@typescript-eslint/recommended"
             ],
@@ -115,18 +113,16 @@ module.exports = {
                 "SharedArrayBuffer": "readonly",
                 "$": "readonly"
             },
-            "parser": "vue-eslint-parser",
+            "parser": "@typescript-eslint/parser",
             "parserOptions": {
-                "parser": "@typescript-eslint/parser",
                 "ecmaFeatures": {"jsx": true},
                 "ecmaVersion": 2018,
                 "sourceType": "module",
                 "project": "./tsconfig.json",
-                "extraFileExtensions": [".ts.vue"],
                 // https://github.com/typescript-eslint/typescript-eslint/issues/967
                 "createDefaultProgram": true,
             },
-            "plugins": ["react", "vue", "@typescript-eslint"],
+            "plugins": ["react", "@typescript-eslint"],
             "rules": {
                 "@typescript-eslint/no-explicit-any": [
                     0
@@ -136,30 +132,6 @@ module.exports = {
                 ],
             },
             "settings": {"react": {"version": "detect"}}
-        },
-        {
-            "files": ["*.vue"],
-            "rules": {
-                "indent": "off",
-                "vue/html-indent": [
-                    "error",
-                    4,
-                ],
-                "vue/script-indent": [
-                    "error",
-                    4,
-                    {
-                        "baseIndent": 1,
-                        "switchCase": 1,
-                    }
-                ],
-                "vue/html-closing-bracket-spacing": [
-                    "error",
-                    {
-                        "selfClosingTag": "never"
-                    }
-                ],
-            }
         }
     ]
 };

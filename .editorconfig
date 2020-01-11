@@ -10,10 +10,7 @@ indent_size = 4
 [{*.json, *.yml, *.xml, .graphqlconfig}]
 indent_size = 2
 
-[.eslintrc]
-indent_size = 2
-
-[.stylelintrc]
+[{.eslintrc, .stylelintrc}]
 indent_size = 2
 
 [Makefile]
