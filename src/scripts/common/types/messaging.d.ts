@@ -3,8 +3,6 @@ import {Instance} from "mobx-state-tree";
 import {PanelStore} from "@common/stores/panel";
 import {SettingsStore} from "@common/stores/settings";
 import {FlagStore} from "@common/stores/flags";
-import {DocumentNode} from "graphql";
-import {TypeScriptOperationVariablesToObject} from "@graphql-codegen/typescript";
 
 declare global {
     interface RuntimeConnection {

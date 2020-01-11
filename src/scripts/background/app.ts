@@ -178,7 +178,7 @@ export class App extends StdApp {
             }
         };
 
-        const onNavigationEnd = (data: WebNavigation.OnCompletedDetailsType) => {
+        const onNavigationEnd = (data: WebNavigation.OnCompletedDetailsType): void => {
             const connection = find(this.panelConnections, (connection) => {
                 return connection.tabId === data.tabId;
             });

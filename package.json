@@ -18,7 +18,7 @@
     "dev-server": "webpack-dev-server",
     "release": "webpack --config webpack.production.js",
     "get-schema": "graphql get-schema",
-    "generate-types": "graphql-codegen --config codegen.yml && eslint --fix src/scripts/common/types/graphql.ts"
+    "generate-types": "npm run-script get-schema && node ./scaffolding/run.js"
   },
   "dependencies": {},
   "devDependencies": {
@@ -30,14 +30,6 @@
     "@babel/preset-env": "^7.7.7",
     "@babel/preset-react": "^7.7.4",
     "@babel/preset-typescript": "^7.7.7",
-    "@graphql-codegen/cli": "1.10.0",
-    "@graphql-codegen/fragment-matcher": "1.10.0",
-    "@graphql-codegen/introspection": "1.10.0",
-    "@graphql-codegen/typescript": "1.10.0",
-    "@graphql-codegen/typescript-document-nodes": "1.10.0",
-    "@graphql-codegen/typescript-graphql-files-modules": "1.10.0",
-    "@graphql-codegen/typescript-operations": "1.10.0",
-    "@graphql-codegen/typescript-react-apollo": "1.10.0",
     "@types/classnames": "^2.2.9",
     "@types/core-js": "^2.5.2",
     "@types/jest": "^24.0.25",

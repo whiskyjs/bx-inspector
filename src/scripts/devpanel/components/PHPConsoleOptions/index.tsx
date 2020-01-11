@@ -9,7 +9,6 @@ import {Editor} from "@devpanel/components/Editor";
 import {SettingsStoreContext} from "@devpanel/state";
 import {PHPConsoleSettings, SettingsStore} from "@common/stores/settings";
 import {Tab, Tabs} from "@common/components/Tabs";
-import {PHPConsole} from "@common/stores/panel";
 
 // eslint-disable-next-line
 export interface PHPConsoleOptionsProps {

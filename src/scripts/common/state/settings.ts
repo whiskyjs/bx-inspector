@@ -1,4 +1,4 @@
-export const defaultSettingsStore = {
+export const defaultSettings = {
     phpConsole: {
         prologue: {
             contents: "<?php\n\n",
