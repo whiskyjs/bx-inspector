@@ -81,6 +81,8 @@ export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHP
     }
 
     protected onTabCloseClick: TabMouseEvent = (e, tabId) => {
+        e.stopPropagation();
+
         const {editors} = this.props;
         const prevTabindex = findIndex(editors.tabs, (tab) => {
             return tab.uuid === tabId;
@@ -88,25 +90,19 @@ export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHP
 
         editors.deleteTab(tabId);
 
-        this.setState({
-            activeTab: editors.tabs[editors.tabs.length > prevTabindex
-                ? prevTabindex
-                : editors.tabs.length - 1].uuid,
-        });
+        this.setActiveTab(editors.tabs[editors.tabs.length > prevTabindex
+            ? prevTabindex
+            : editors.tabs.length - 1].uuid);
     };
 
     protected onTabAddClick: TablessMouseEvent = () => {
         const {editors} = this.props;
 
-        this.setState({
-            activeTab: editors.addTab(),
-        });
+        this.setActiveTab(editors.addTab());
     };
 
     protected onTabClick: TabMouseEvent = (e, tabId) => {
-        this.setState({
-            activeTab: tabId,
-        });
+        this.setActiveTab(tabId);
     };
 
     protected onTabMouseUp: TabMouseEvent = (e, tabId) => {
@@ -116,6 +112,14 @@ export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHP
             this.onTabCloseClick(e, tabId);
         }
     };
+
+    protected setActiveTab(tabId: string): void
+    {
+        this.setState({
+            activeTab: tabId,
+        });
+    }
+
 
     protected getEditorPanel = (tab: Instance<typeof PHPEditor>): ReactElement => {
         return (<Editor

@@ -4,7 +4,7 @@
   "name": "BX-Inspector",
   "version": "0.1.0",
   "icons": {
-    "48": "icons/border-48.png"
+    "48": "icon.png"
   },
   "content_scripts": [],
   "background": {

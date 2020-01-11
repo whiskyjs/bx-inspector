@@ -156,7 +156,7 @@ export class Editor extends Component<EditorProps, EditorState> {
 
         return (
             <div className="editor">
-                <div className="editor__header"></div>
+                <div className="editor__header"/>
                 <div
                     className="editor__input"
                     onKeyDown={this.onKeyDown}
