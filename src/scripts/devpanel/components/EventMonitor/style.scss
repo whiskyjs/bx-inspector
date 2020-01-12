@@ -1,0 +1,32 @@
+@import "@styles/mixins.scss";
+
+.event-monitor {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-monitor-events {
+    font-size: 11px;
+}
+
+.event-monitor-events__event-category {
+    margin-bottom: 8px;
+}
+
+.event-monitor-events__event-category-title {
+    font-size: 11px;
+    margin-bottom: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.event-monitor-events__event-category-list label {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.event-monitor-events__event-category-list input {
+    margin-right: 6px;
+}

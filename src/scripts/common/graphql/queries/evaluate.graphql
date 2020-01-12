@@ -1,6 +1,0 @@
-query evaluate($language: EvaluationLanguage!, $source: String!) {
-    evaluate(language: $language, source: $source) {
-        output
-        result
-    }
-}

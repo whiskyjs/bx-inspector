@@ -28,7 +28,7 @@ export class NetworkingOptions extends PureComponent<NetworkingOptionsProps, Net
                     <div className="col-xs-4">
                         <div className="row">
                             <div className="col-xs-12">
-                                <label className="form-group">
+                                <label className="form-group form-group--first">
                                     <span
                                         className="form-group__label"
                                     >
@@ -38,7 +38,20 @@ export class NetworkingOptions extends PureComponent<NetworkingOptionsProps, Net
                                         disabled
                                         className="form-group__input"
                                         type="text"
-                                        value={networking.endpoint}
+                                        value={networking.graphqlPath}
+                                    />
+                                </label>
+                                <label className="form-group">
+                                    <span
+                                        className="form-group__label"
+                                    >
+                                        URL прокси-сервера:
+                                    </span>
+                                    <input
+                                        disabled
+                                        className="form-group__input"
+                                        type="text"
+                                        value={networking.websocketUrl}
                                     />
                                 </label>
                             </div>

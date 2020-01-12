@@ -1,0 +1,3 @@
+mutation subscribe($clientId: String!, $events: ModuleEventSetTypeInput!) {
+    inspectEventsSubscribe(clientId: $clientId, events: $events)
+}

@@ -1,0 +1,54 @@
+//noinspection CssUnknownTarget
+@import "@styles/variables.scss";
+//noinspection CssUnknownTarget
+@import "@styles/mixins.scss";
+
+.toolbar {
+    position: relative;
+    background-color: $background-color;
+    height: 30px;
+    box-sizing: border-box;
+    display: block;
+    padding: 0;
+    font-size: 12px;
+    border-bottom: 1px solid $border-color;
+    cursor: default;
+    user-select: none;
+}
+
+.toolbar__action {
+    display: flex;
+    float: left;
+    height: 30px;
+    padding: 0 8px;
+    align-items: center;
+
+    &:hover {
+        background-color: $hover-background-color;
+    }
+
+    &:active {
+        background-color: darken($hover-background-color, 5);
+    }
+}
+
+.toolbar__action-content {
+    margin-top: -2px;
+    display: inline-block;
+}
+
+.toolbar__action--disabled {
+    @include disabled;
+}
+
+.toolbar__action--checked {
+    background-color: darken($hover-background-color, 10);
+
+    &:hover {
+        background-color: darken($hover-background-color, 10);
+    }
+
+    &:active {
+        background-color: darken($hover-background-color, 10);
+    }
+}

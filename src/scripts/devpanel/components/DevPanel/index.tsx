@@ -4,15 +4,16 @@ import React, {ReactElement} from "react";
 import {Instance} from "mobx-state-tree";
 import classNames from "classnames";
 import {observer} from "mobx-react";
+import {ToastContainer} from "react-toastify";
 
 import {PHPConsole} from "@devpanel/components/PHPConsole";
 import {About} from "@devpanel/components/About";
 import {Options} from "@devpanel/components/Options";
-
+import {EventMonitor} from "@devpanel/components/EventMonitor";
 import {Tab, Tabs} from "@common/components/Tabs";
+
 import {FlagStoreContext} from "@devpanel/state";
 import {FlagStore} from "@common/stores/flags";
-import {ToastContainer} from "react-toastify";
 
 // eslint-disable-next-line
 export interface DevPanelProps {
@@ -43,6 +44,11 @@ export class DevPanel extends React.PureComponent<DevPanelProps, DevPanelState> 
                     id="php-console"
                     title="Консоль PHP"
                     panel={<PHPConsole/>}
+                />
+                <Tab
+                    id="event-monitor"
+                    title="Монитор событий"
+                    panel={<EventMonitor/>}
                 />
                 <Tab
                     id="options"

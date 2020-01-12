@@ -81,8 +81,6 @@ export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHP
     }
 
     protected onTabCloseClick: TabMouseEvent = (e, tabId) => {
-        e.stopPropagation();
-
         const {editors} = this.props;
         const prevTabindex = findIndex(editors.tabs, (tab) => {
             return tab.uuid === tabId;
@@ -150,9 +148,11 @@ export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHP
 
                 try {
                     try {
-                        const result = await client.evaluatePhp(editor.getValue());
+                        const result = await client.inspectEvaluate(editor.getValue());
 
-                        setActiveResultValue(result.output!, result.result!);
+                        if (result) {
+                            setActiveResultValue(result.output!, result.result!);
+                        }
                     } catch (e) {
                         toast.error(e.message, {
                             position: "bottom-center",

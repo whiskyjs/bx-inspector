@@ -10,11 +10,16 @@ form {
 }
 
 .form-group {
-    padding: 10px;
+    padding: 6px;
     display: flex;
     flex-direction: row;
     align-content: center;
     align-items: center;
+    justify-content: space-between;
+}
+
+.form-group--first {
+    margin-top: 6px;
 }
 
 .form-group__label {
@@ -26,4 +31,5 @@ form {
     display: block;
     flex: 1;
     padding: 8px 4px;
+    max-width: 60%;
 }

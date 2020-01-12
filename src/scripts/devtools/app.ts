@@ -11,8 +11,7 @@ export class App extends StdApp {
             "icon.png",
             "devpanel.html"
         ).then(() => {
-            // newPanel.onShown.addListener(initialisePanel);
-            // newPanel.onHidden.addListener(unInitialisePanel);
+            // Не делаем ничего
         });
     }
 }

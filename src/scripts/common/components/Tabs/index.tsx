@@ -5,11 +5,13 @@ import {find, findIndex} from "lodash";
 import classNames from "classnames";
 import {blocks, render} from "@common/functions";
 
-export type TabMouseEvent = (e: MouseEvent<HTMLElement>, tabId: string) => void;
+export interface TabMouseEvent {
+    (e: MouseEvent<HTMLElement>, tabId: string): void
+}
 
-export type TablessMouseEvent = (e: MouseEvent<HTMLElement>) => void;
-
-export type TabMouselessEvent = (tabId: string) => void;
+export interface TablessMouseEvent {
+    (e: MouseEvent<HTMLElement>): void;
+}
 
 export interface TabProps {
     id: string;
@@ -28,8 +30,22 @@ export class Tab extends PureComponent<TabProps> {
         closable: false
     };
 
+    constructor(props: TabProps) {
+        super(props);
+    }
+
+    protected onTabCloseClick: TablessMouseEvent = (e) => {
+        const {id, onTabCloseClick} = this.props;
+
+        e.stopPropagation();
+
+        if (onTabCloseClick) {
+            onTabCloseClick(e, id);
+        }
+    };
+
     public render(): ReactElement {
-        const {id, title, active, closable, onTabClick, onTabMouseUp, onTabCloseClick} = this.props;
+        const {id, title, active, closable, onTabClick, onTabMouseUp} = this.props;
 
         return (<div
             className={classNames(
@@ -44,7 +60,7 @@ export class Tab extends PureComponent<TabProps> {
                 [closable, (<div
                     key="close"
                     className="tabs__tab-header-close"
-                    onClick={(e): void => onTabCloseClick && onTabCloseClick(e, id)}
+                    onClick={this.onTabCloseClick}
                 />)]
             ])}
 
@@ -68,7 +84,6 @@ export interface TabsProps {
 export interface TabsState {
     activeTab?: string;
     activeTabIndex: number;
-    inTransition: boolean;
 }
 
 export class Tabs extends PureComponent<TabsProps, TabsState> {
@@ -129,7 +144,6 @@ export class Tabs extends PureComponent<TabsProps, TabsState> {
         this.state = {
             activeTab: props.activeTab || (firstTab && firstTab.props.id),
             activeTabIndex: firstTab ? 0 : -1,
-            inTransition: false,
         };
     }
 
@@ -157,7 +171,7 @@ export class Tabs extends PureComponent<TabsProps, TabsState> {
         const {canAddTabs, onTabClick, onTabMouseUp, onTabCloseClick, onTabAddClick} = this.props;
         const {activeTab} = this.state;
 
-        return (<div className="tabs__tab-headers clearfix">
+        return (<div className="tabs__tab-headers">
             <React.Fragment>
                 {Children.map(Tabs.getTabs(this.props), (tab: Tab) => {
                     return (

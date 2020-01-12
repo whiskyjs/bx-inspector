@@ -1,0 +1,8 @@
+query evaluate($language: EvaluationLanguage!, $source: String!) {
+    inspect {
+        evaluate(language: $language, source: $source) {
+            output
+            result
+        }
+    }
+}

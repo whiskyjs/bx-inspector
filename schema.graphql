@@ -1,5 +1,5 @@
 # source: http://blank-1.local/bitrix/tools/wjs_api_graphql.php
-# timestamp: Sat Jan 11 2020 18:39:19 GMT+0300 (Moscow Standard Time)
+# timestamp: Mon Feb 24 2020 22:08:26 GMT+0300 (Moscow Standard Time)
 
 """
 Язык, произвольное выражение на котором сможет выполнить (вычислить) сервер.
@@ -28,11 +28,36 @@ input GroupFilterInput {
   NAME: String
 }
 
+type Inspect {
+  version: String
+  evaluate(language: EvaluationLanguage!, source: String!): EvaluationResult
+}
+
+input ModuleEventSetTypeInput {
+  main: [ModuleMainEventsType!]
+  iblock: [ModuleIBlockEventsType!]
+}
+
+"""Поддерживаемые события модуля 'iblock'."""
+enum ModuleIBlockEventsType {
+  """OnBeforeIBlockElementUpdate"""
+  OnBeforeIBlockElementUpdate
+}
+
+"""Поддерживаемые события главного модуля."""
+enum ModuleMainEventsType {
+  """OnPageStart"""
+  OnPageStart
+}
+
+type Mutation {
+  inspectEventsSubscribe(clientId: String!, events: ModuleEventSetTypeInput!): String
+}
+
 type Query {
   user(by: String = "ID", order: String = "ASC", filter: UserFilterInput = {}): User
   group(by: String = "ID", order: String = "ASC", filter: GroupFilterInput = {}): Group
-  version: String
-  evaluate(language: EvaluationLanguage!, source: String!): EvaluationResult
+  inspect: Inspect
 }
 
 type User {

@@ -20,7 +20,7 @@ export class App extends StdApp {
         super();
 
         this.handleConnections();
-        this.handleBrowserEveents();
+        this.handleBrowserEvents();
     }
 
     protected handleConnections(): void {
@@ -164,7 +164,7 @@ export class App extends StdApp {
         });
     }
 
-    protected handleBrowserEveents(): void {
+    protected handleBrowserEvents(): void {
         const onBeforeNavigate = (data: WebNavigation.OnBeforeNavigateDetailsType): void => {
             const connection = find(this.panelConnections, (connection) => {
                 return connection.tabId === data.tabId;

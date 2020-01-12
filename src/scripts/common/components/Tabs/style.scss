@@ -1,5 +1,7 @@
 //noinspection CssUnknownTarget
 @import "@styles/variables.scss";
+//noinspection CssUnknownTarget
+@import "@styles/mixins.scss";
 
 .tabs {
     display: flex;
@@ -13,6 +15,8 @@
 }
 
 .tabs__tab-headers {
+    @include clearfix;
+
     background-color: $background-color;
     border-bottom: 1px $border-color solid;
 
@@ -76,7 +80,7 @@
         color: darken($active-color, 20);
         cursor: pointer;
         position: relative;
-        top: 8px;
+        top: 4px;
     }
 
     &:hover {
@@ -89,7 +93,6 @@
 }
 
 .tabs__tab_panels {
-    transform-style: preserve-3d;
     position: relative;
     flex: 1;
     display: flex;
@@ -102,9 +105,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    transform: translate3d(0, 0, 0);
 }
 
 .tabs__tab_panel--active {
-    transform: translate3d(0, 0, 1px);
 }

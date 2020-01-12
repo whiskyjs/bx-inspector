@@ -27,9 +27,14 @@ export const PHPConsoleSettings = types.model("PHPConsoleSettings", {
 });
 
 export const NetworkingSettings = types.model("NetworkingSettings", {
-    endpoint: types.optional(types.string, "/bitrix/tools/wjs_api_graphql.php"),
-}).actions(() => {
-    return {};
+    graphqlPath: types.optional(types.string, "/bitrix/tools/wjs_api_graphql.php"),
+    websocketUrl: types.optional(types.string, ""),
+}).actions((self) => {
+    return {
+        setWebsocketUrl(url: string): void {
+            self.websocketUrl = url;
+        }
+    };
 });
 
 export const CommonSettings = types.model("CommonSettings", {

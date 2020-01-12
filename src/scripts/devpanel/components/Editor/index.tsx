@@ -13,6 +13,7 @@ export interface EditorProps {
     defaultValue?: string;
     value?: string;
     viewState?: string;
+    readOnly?: boolean;
     message?: string;
     onChange?: (data: EditorChangeData) => void;
     actions?: ReadonlyArray<editor.IActionDescriptor>;
@@ -25,6 +26,7 @@ export interface EditorState {
 export class Editor extends Component<EditorProps, EditorState> {
     protected static defaultProps = {
         defaultValue: "",
+        readOnly: false,
     };
 
     protected editor?: editor.IStandaloneCodeEditor;
@@ -51,6 +53,9 @@ export class Editor extends Component<EditorProps, EditorState> {
         this.options = {
             selectOnLineNumbers: true,
             automaticLayout: true,
+            folding: true,
+            readOnly: props.readOnly,
+            showFoldingControls: "always",
         };
 
         this.state = {};

@@ -1,0 +1,86 @@
+//noinspection CssUnknownTarget
+@import "@styles/variables.scss";
+//noinspection CssUnknownTarget
+@import "@styles/mixins.scss";
+
+.modal-backdrop {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    opacity: 0.2;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+}
+
+.modal-container {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 101;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 48px 0 12px;
+}
+
+.modal {
+    background-color: $background-color;
+    border: 1px solid $active-color;
+    cursor: default;
+    max-height: calc(100vh - 60px);
+    overflow: auto;
+}
+
+.modal__header {
+    padding: 6px 12px;
+    background-color: $active-color;
+    color: #fff;
+
+    &, * {
+        font-size: 12px;
+    }
+}
+
+.modal__body {
+    padding: 12px;
+}
+
+.modal__footer {
+    padding: 6px 12px;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-start;
+
+    &, * {
+        font-size: 11px;
+    }
+}
+
+.modal__footer-button {
+    display: inline-block;
+    padding: 4px 7px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #000;
+    outline: none;
+    border: 1px solid $active-color;
+
+    &:not(:first-child) {
+        margin-right: 6px;
+    }
+
+    &:hover {
+        background-color: darken($background-color, 5);
+    }
+
+    &:active {
+        background-color: darken($background-color, 10);
+    }
+}

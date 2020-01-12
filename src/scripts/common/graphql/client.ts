@@ -1,9 +1,14 @@
 import ApolloClient, {DocumentNode, InMemoryCache} from "apollo-boost";
+import {Instance} from "mobx-state-tree";
 
-import {QueryEvaluate, QueryEvaluateOutbound} from "@common/types/graphql-queries";
-import {QueryEvaluateParams, QueryResponse} from "@common/types/graphql-types";
+import {InspectEvaluate, InspectEvaluateOutbound} from "@common/types/queries/inspect/evaluate";
+import {InspectEvaluateParams} from "@common/types/graphql-types";
+
+import {InspectEventsSubscribe, InspectEventsSubscribeOutbound} from "@common/types/mutations/inspect/events/subscribe";
+import {MutationInspectEventsSubscribeParams} from "@common/types/graphql-types";
 
 import {PHPHelper} from "@common/graphql/helpers/php";
+import * as MobX from "@common/types/graphql-models";
 
 export interface ClientOptions {
     endpointUri?: string;
@@ -29,7 +34,7 @@ export class Client {
             const settingsStore = app.getStores().settings;
 
             client = new ApolloClient({
-                uri: `${pageInfo?.protocol}//${pageInfo?.hostname}${settingsStore.common.networking.endpoint}`,
+                uri: `${pageInfo?.protocol}//${pageInfo?.hostname}${settingsStore.common.networking.graphqlPath}`,
             });
         } else {
             throw new Error("Невозможно создать клиент: не определен URI сервера.");
@@ -43,13 +48,23 @@ export class Client {
         this.app = app;
     }
 
-    public async evaluatePhp(source: string): Promise<{}> {
-        const result = await this.query<QueryEvaluateOutbound, QueryEvaluateParams>(QueryEvaluate, {
+    public async inspectEvaluate(source: string): Promise<InspectEvaluateOutbound["inspect"]["evaluate"]> {
+        const result = await this.query<InspectEvaluateOutbound, InspectEvaluateParams>(InspectEvaluate, {
             language: "PHP",
             source: PHPHelper.stripWhitespacePhpTags(source),
         });
 
-        return result.evaluate!;
+        return result?.inspect?.evaluate;
+    }
+
+    public async inspectEventsSubscribe(clientId: string, events: Instance<typeof MobX.ModuleEventSetTypeInput>): Promise<InspectEventsSubscribeOutbound["inspectEventsSubscribe"]> {
+        const result = await this.mutate<InspectEventsSubscribeOutbound, MutationInspectEventsSubscribeParams>(InspectEventsSubscribe, {
+            clientId: clientId,
+            // TODO: Подумать, можно ли изящнее
+            events,
+        });
+
+        return result.inspectEventsSubscribe;
     }
 
     public cancelRequestsActive(): void {
@@ -70,6 +85,18 @@ export class Client {
         });
 
         return result.data;
+    }
+
+    protected async mutate<R, V extends GenericObject>(mutation: DocumentNode, variables: V): Promise<R>
+    {
+        this.setRequestActive();
+
+        const result = await this.client.mutate<R, V>({
+            mutation,
+            variables,
+        });
+
+        return result.data as R;
     }
 
     protected setRequestActive(): void {
