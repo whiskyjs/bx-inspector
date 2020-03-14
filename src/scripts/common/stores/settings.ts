@@ -33,7 +33,10 @@ export const NetworkingSettings = types.model("NetworkingSettings", {
     return {
         setWebsocketUrl(url: string): void {
             self.websocketUrl = url;
-        }
+        },
+        setGraphqlPath(path: string): void {
+            self.graphqlPath = path;
+        },
     };
 });
 

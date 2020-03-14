@@ -1,0 +1,55 @@
+//noinspection CssUnknownTarget
+@import "@styles/variables.scss";
+//noinspection CssUnknownTarget
+@import "@styles/mixins.scss";
+
+.accordion {
+    font-size: 11px;
+}
+
+.accordion__tab--open {
+    border: 1px $active-color solid;
+
+    &:not(:last-child) {
+        margin-bottom: 8px;
+    }
+}
+
+.accordion__tab-header {
+    font-size: 11px;
+    margin-bottom: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 6px;
+    cursor: pointer;
+    background-color: $border-color;
+    border: 1px $border-color solid;
+
+    &:hover,
+    &:active {
+        border-color: $hover-border-color;
+    }
+}
+
+.accordion__tab-header--open {
+    background-color: darken($active-color, 5);
+    border-color: darken($active-color, 5);
+    color: darken(#fff, 5);
+
+    &:hover,
+    &:active {
+        background-color: darken($active-color, 10);
+        border-color: darken($active-color, 20);
+        color: darken(#fff, 10);
+    }
+}
+
+.accordion__tab-contents {
+    margin: 12px 6px 6px;
+    display: none;
+}
+
+.accordion__tab-contents--open {
+    margin: 12px 6px 6px;
+    display: block;
+}

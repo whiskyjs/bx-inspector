@@ -1,28 +1,43 @@
+type SocketAction = "attach" | "remote:event";
+
+interface SocketMessageHandler {
+    (message: ProxyMessage, replyWith: (data?: JsonMap) => void): void;
+}
+
 interface SocketCallbacks {
     getId: () => string;
     onMessage?: {
-        [action: string]: (message: ProxyMessage, replyWith: (data?: JsonMap) => void) => void;
+        [K in SocketAction]?: SocketMessageHandler[];
     };
 }
 
-interface AttachMessage {
+interface SocketMessage {
+    action: SocketAction;
+}
+
+interface AttachMessage extends SocketMessage {
     action: "attach";
     uuid: string;
 }
 
-interface AttachMessageResponse {
+interface AttachMessageResponse extends SocketMessage {
     action: "attach";
     uuid: string;
 }
 
-type ProxyMessage = AttachMessage;
-
-type ProxyMessageResponse = AttachMessageResponse;
-
-interface SendMessage {
-    (message: ProxyMessage): ProxyMessageResponse;
+interface RemoteEventMessage extends SocketMessage {
+    action: "remote:event";
+    module: string;
+    event: string;
+    args: Record<any, any>;
+    time: number;
 }
 
-interface SendAttachMessage extends SendMessage {
-    (message: AttachMessage): AttachMessageResponse;
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface RemoteEventMessageResponse extends SocketMessage {
+    action: "remote:event";
 }
+
+type ProxyMessage = AttachMessage | RemoteEventMessage;
+
+type ProxyMessageResponse = AttachMessageResponse | RemoteEventMessageResponse;

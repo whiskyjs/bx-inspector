@@ -7,6 +7,7 @@ import {FlagStore} from "@common/stores/flags";
 
 declare global {
     interface RuntimeCallbacks {
+        getId: () => string;
         onConnect?: (port: Runtime.Port) => void;
         onDisconnect?: (port: Runtime.Port) => void;
         onMessage?: (port: Runtime.Port, message: RuntimeMessage) => void;
@@ -15,23 +16,22 @@ declare global {
 
     interface RuntimeConnection {
         tabId: number;
+        tabUuid: string;
         hostname?: string;
+        schema?: string;
         port: Runtime.Port;
     }
 
     interface ConnectMessage {
         action: "connect";
         tabId: number;
-    }
-
-    interface ConnectMessage {
-        action: "connect";
-        tabId: number;
+        tabUuid: string;
     }
 
     interface SetHostnameMessage {
         action: "set-hostname";
         hostname: string;
+        schema: string;
     }
 
     interface SetHostDataMessage {

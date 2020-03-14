@@ -6,7 +6,7 @@ import classNames from "classnames";
 import {blocks, render} from "@common/functions";
 
 export interface TabMouseEvent {
-    (e: MouseEvent<HTMLElement>, tabId: string): void
+    (e: MouseEvent<HTMLElement>, tabId: string): void;
 }
 
 export interface TablessMouseEvent {

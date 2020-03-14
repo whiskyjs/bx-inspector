@@ -33,3 +33,7 @@
     overflow-x: hidden;
     line-height: 30px;
 }
+
+.editor__input--readonly .cursors-layer {
+    display: none !important;
+}

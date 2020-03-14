@@ -1,0 +1,3 @@
+mutation unsubscribe($clientId: String!) {
+    inspectEventsUnsubscribe(clientId: $clientId)
+}

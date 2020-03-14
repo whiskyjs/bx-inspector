@@ -7,6 +7,7 @@ import {debounce} from "lodash";
 import {shallowEqual} from "@babel/types";
 
 import {blocks, collect} from "@common/functions";
+import cn from "classnames";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface EditorProps {
@@ -157,13 +158,15 @@ export class Editor extends Component<EditorProps, EditorState> {
     });
 
     public render(): ReactElement {
-        const {defaultValue, value, message} = this.props;
+        const {defaultValue, value, message, readOnly} = this.props;
 
         return (
             <div className="editor">
                 <div className="editor__header"/>
                 <div
-                    className="editor__input"
+                    className={cn("editor__input", {
+                        "editor__input--readonly": readOnly,
+                    })}
                     onKeyDown={this.onKeyDown}
                     onKeyUp={this.onKeyUp}
                 >
@@ -183,5 +186,13 @@ export class Editor extends Component<EditorProps, EditorState> {
                 </div>
             </div>
         );
+    }
+
+    public getEditor(): editor.IStandaloneCodeEditor {
+        if (!this.editor) {
+            throw new Error("Ошибка - этот код никогда не должен выполняться.");
+        }
+
+        return this.editor;
     }
 }

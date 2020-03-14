@@ -23,6 +23,7 @@ export class ProxyMessageHandler {
                 return;
             }
 
+            this.disconnectFromProxy();
             this.connectToProxy(newValue.storedValue);
         });
 
@@ -47,11 +48,22 @@ export class ProxyMessageHandler {
         });
 
         if (this.callbacks.onMessage) {
-            Object.keys(this.callbacks.onMessage).forEach((action) => {
-                this.socket?.on(action, this.callbacks.onMessage![action]);
-            })
+            // eslint-disable-next-line no-restricted-syntax
+            for (const action in this.callbacks.onMessage) {
+                this.callbacks.onMessage![action as SocketAction].forEach((fn) => {
+                    this.socket?.on(action, fn);
+                });
+            }
         }
     };
+
+    public addMessageListener(action: string, fn: SocketMessageHandler): void {
+        this.socket?.on(action, fn);
+    }
+
+    public removeMessageListener(action: string, fn: SocketMessageHandler): void {
+        this.socket?.off(action, fn);
+    }
 
     public disconnectFromProxy = (): void => {
         if (this.socket) {

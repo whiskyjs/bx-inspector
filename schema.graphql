@@ -1,5 +1,5 @@
 # source: http://blank-1.local/bitrix/tools/wjs_api_graphql.php
-# timestamp: Mon Feb 24 2020 22:08:26 GMT+0300 (Moscow Standard Time)
+# timestamp: Sun Mar 29 2020 14:19:12 GMT+0300 (Moscow Standard Time)
 
 """
 Язык, произвольное выражение на котором сможет выполнить (вычислить) сервер.
@@ -33,25 +33,42 @@ type Inspect {
   evaluate(language: EvaluationLanguage!, source: String!): EvaluationResult
 }
 
-input ModuleEventSetTypeInput {
-  main: [ModuleMainEventsType!]
-  iblock: [ModuleIBlockEventsType!]
+input ModuleEventSetInput {
+  main: [ModuleMainEvents!]
+  iblock: [ModuleIblockEvents!]
+  form: [ModuleFormEvents!]
+}
+
+"""Поддерживаемые события модуля 'form'."""
+enum ModuleFormEvents {
+  """OnBeforeResultAdd"""
+  OnBeforeResultAdd
+
+  """OnAfterResultAdd"""
+  OnAfterResultAdd
 }
 
 """Поддерживаемые события модуля 'iblock'."""
-enum ModuleIBlockEventsType {
+enum ModuleIblockEvents {
   """OnBeforeIBlockElementUpdate"""
   OnBeforeIBlockElementUpdate
+
+  """OnAfterIBlockElementUpdate"""
+  OnAfterIBlockElementUpdate
 }
 
 """Поддерживаемые события главного модуля."""
-enum ModuleMainEventsType {
-  """OnPageStart"""
-  OnPageStart
+enum ModuleMainEvents {
+  """OnBeforeEventAdd"""
+  OnBeforeEventAdd
+
+  """OnBeforeEventSend"""
+  OnBeforeEventSend
 }
 
 type Mutation {
-  inspectEventsSubscribe(clientId: String!, events: ModuleEventSetTypeInput!): String
+  inspectEventsSubscribe(clientId: String!, events: ModuleEventSetInput!): String
+  inspectEventsUnsubscribe(clientId: String!): String
 }
 
 type Query {

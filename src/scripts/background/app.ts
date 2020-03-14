@@ -12,6 +12,7 @@ import {backgroundStore, flagStore} from "@background/state";
 import {defaultPanelStore} from "@common/state/panel";
 import {PanelStore} from "@common/stores/panel";
 import {SettingsStore} from "@common/stores/settings";
+import {Client} from "@common/graphql/client";
 
 export class App extends StdApp {
     protected panelConnections: Array<RuntimeConnection> = [];
@@ -38,6 +39,7 @@ export class App extends StdApp {
                     case "connect": {
                         this.panelConnections.push({
                             tabId: message.tabId,
+                            tabUuid: message.tabUuid,
                             port,
                             hostname: undefined,
                         });
@@ -59,6 +61,7 @@ export class App extends StdApp {
 
                         if (connection && (connection.hostname !== message.hostname)) {
                             connection.hostname = message.hostname;
+                            connection.schema = message.schema;
 
                             if (!backgroundStore.sites.has(connection.hostname)) {
                                 backgroundStore.setSiteData(connection.hostname, PanelStore.create(defaultPanelStore));
@@ -154,6 +157,8 @@ export class App extends StdApp {
                 if (connection) {
                     console.log("onDisconnect(). Deleting connection:", connection);
 
+                    this.freeConnection(connection);
+
                     remove(this.panelConnections, (connection) => {
                         return connection.port === port;
                     });
@@ -198,5 +203,25 @@ export class App extends StdApp {
 
     protected postMessage(port: Runtime.Port, message: RuntimeMessage): void {
         port.postMessage(message);
+    }
+
+    /**
+     * Закрывает любые внешние подключения/освобождает ресурсы, ассоциированные с этой вкладкой.
+     * Пока из таких только подписка на события через вебсокеты - чистим записи в таблице.
+     * Сам вебсокет-канал закроется автоматически при обрыве соединения.
+     *
+     * @param connection
+     */
+    protected freeConnection(connection: RuntimeConnection): void {
+        const endpointUri =
+            `${connection.schema}://${connection.hostname}${backgroundStore.settings.common.networking.graphqlPath}`;
+
+        const client = Client.createClient({
+            endpointUri,
+        });
+
+        client.inspectEventsUnsubscribe(
+            connection.tabUuid
+        );
     }
 }

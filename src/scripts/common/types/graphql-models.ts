@@ -1,17 +1,32 @@
 import {IAnyModelType, types} from "mobx-state-tree";
 
-export const EvaluationLanguage = types.enumeration("EvaluationLanguage", [
+export const EvaluationLanguageValues = [
     "PHP",
     "SQL",
-]);
+];
 
-export const ModuleIBlockEventsType = types.enumeration("ModuleIBlockEventsType", [
+export const EvaluationLanguage = types.enumeration("EvaluationLanguage", EvaluationLanguageValues);
+
+export const ModuleFormEventsValues = [
+    "OnBeforeResultAdd",
+    "OnAfterResultAdd",
+];
+
+export const ModuleFormEvents = types.enumeration("ModuleFormEvents", ModuleFormEventsValues);
+
+export const ModuleIblockEventsValues = [
     "OnBeforeIBlockElementUpdate",
-]);
+    "OnAfterIBlockElementUpdate",
+];
 
-export const ModuleMainEventsType = types.enumeration("ModuleMainEventsType", [
-    "OnPageStart",
-]);
+export const ModuleIblockEvents = types.enumeration("ModuleIblockEvents", ModuleIblockEventsValues);
+
+export const ModuleMainEventsValues = [
+    "OnBeforeEventAdd",
+    "OnBeforeEventSend",
+];
+
+export const ModuleMainEvents = types.enumeration("ModuleMainEvents", ModuleMainEventsValues);
 
 export const GroupFilterInput = types
     .model("GroupFilterInput", {
@@ -19,10 +34,11 @@ export const GroupFilterInput = types
         "NAME": types.maybe(types.string),
     });
 
-export const ModuleEventSetTypeInput = types
-    .model("ModuleEventSetTypeInput", {
-        "main": types.maybe(types.array(ModuleMainEventsType)),
-        "iblock": types.maybe(types.array(ModuleIBlockEventsType)),
+export const ModuleEventSetInput = types
+    .model("ModuleEventSetInput", {
+        "main": types.maybe(types.array(ModuleMainEvents)),
+        "iblock": types.maybe(types.array(ModuleIblockEvents)),
+        "form": types.maybe(types.array(ModuleFormEvents)),
     });
 
 export const UserFilterInput = types
@@ -63,6 +79,7 @@ export const Inspect = types
 export const Mutation = types
     .model("Mutation", {
         "inspectEventsSubscribe": types.maybe(types.string),
+        "inspectEventsUnsubscribe": types.maybe(types.string),
     });
 
 export const Query = types

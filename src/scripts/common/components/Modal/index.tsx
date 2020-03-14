@@ -20,6 +20,7 @@ export enum ModalButtons {
 
 export interface ModalProps {
     title?: string;
+    className?: string;
     buttons?: ReadonlyArray<ModalButtons>;
     visible: boolean;
     children: any;
@@ -73,7 +74,7 @@ export class Modal extends PureComponent<ModalProps> {
     }
 
     protected renderPortalContents(): ReactElement {
-        const {onBackdropClick} = this.props;
+        const {className, onBackdropClick} = this.props;
 
         return (<Fragment>
             <div
@@ -84,7 +85,7 @@ export class Modal extends PureComponent<ModalProps> {
                 onClick={onBackdropClick}
             >
                 <div
-                    className="modal"
+                    className={cn("modal", className)}
                     onClick={this.onModalClick}
                 >
                     {this.renderHeader()}

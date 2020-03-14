@@ -7,6 +7,10 @@ import {InspectEvaluateParams} from "@common/types/graphql-types";
 import {InspectEventsSubscribe, InspectEventsSubscribeOutbound} from "@common/types/mutations/inspect/events/subscribe";
 import {MutationInspectEventsSubscribeParams} from "@common/types/graphql-types";
 
+// eslint-disable-next-line max-len
+import {InspectEventsUnsubscribe, InspectEventsUnsubscribeOutbound} from "@common/types/mutations/inspect/events/unsubscribe";
+import {MutationInspectEventsUnsubscribeParams} from "@common/types/graphql-types";
+
 import {PHPHelper} from "@common/graphql/helpers/php";
 import * as MobX from "@common/types/graphql-models";
 
@@ -57,7 +61,9 @@ export class Client {
         return result?.inspect?.evaluate;
     }
 
-    public async inspectEventsSubscribe(clientId: string, events: Instance<typeof MobX.ModuleEventSetTypeInput>): Promise<InspectEventsSubscribeOutbound["inspectEventsSubscribe"]> {
+    // eslint-disable-next-line max-len
+    public async inspectEventsSubscribe(clientId: string, events: Instance<typeof MobX.ModuleEventSetInput>): Promise<InspectEventsSubscribeOutbound["inspectEventsSubscribe"]> {
+        // eslint-disable-next-line max-len
         const result = await this.mutate<InspectEventsSubscribeOutbound, MutationInspectEventsSubscribeParams>(InspectEventsSubscribe, {
             clientId: clientId,
             // TODO: Подумать, можно ли изящнее
@@ -65,6 +71,16 @@ export class Client {
         });
 
         return result.inspectEventsSubscribe;
+    }
+
+    // eslint-disable-next-line max-len
+    public async inspectEventsUnsubscribe(clientId: string): Promise<InspectEventsUnsubscribeOutbound["inspectEventsUnsubscribe"]> {
+        // eslint-disable-next-line max-len
+        const result = await this.mutate<InspectEventsUnsubscribeOutbound, MutationInspectEventsUnsubscribeParams>(InspectEventsUnsubscribe, {
+            clientId: clientId,
+        });
+
+        return result.inspectEventsUnsubscribe;
     }
 
     public cancelRequestsActive(): void {

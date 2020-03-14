@@ -6,27 +6,19 @@
     flex-direction: column;
 }
 
-.event-monitor-events {
-    font-size: 11px;
+.modal--event-monitor {
+    min-width: 360px;
 }
 
-.event-monitor-events__event-category {
-    margin-bottom: 8px;
+.module-events {
+    font-size: 12px;
 }
-
-.event-monitor-events__event-category-title {
-    font-size: 11px;
-    margin-bottom: 4px;
-    font-weight: bold;
-    text-transform: uppercase;
+.module-events__event {
+    margin-bottom: 12px;
 }
-
-.event-monitor-events__event-category-list label {
-    width: 100%;
-    display: flex;
-    align-items: center;
-}
-
-.event-monitor-events__event-category-list input {
+.module-events__event-input {
+    float: left;
+    position: relative;
+    top: -4px;
     margin-right: 6px;
 }

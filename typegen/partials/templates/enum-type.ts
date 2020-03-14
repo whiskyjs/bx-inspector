@@ -1,5 +1,7 @@
 import {types} from "mobx-state-tree";
 
-export const EnumTypeName = types.enumeration("EnumTypeName", [
+export const EnumTypeNameValues = [
     "EnumTypeValue",
-]);
+];
+
+export const EnumTypeName = types.enumeration("EnumTypeName", EnumTypeNameValues);

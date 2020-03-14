@@ -36,6 +36,7 @@ export class RuntimeMessageHandler {
         this.port.postMessage({
             action: "connect",
             tabId: browser.devtools.inspectedWindow.tabId,
+            tabUuid: this.callbacks.getId(),
         });
 
         if (typeof this.callbacks.onConnect === "function") {
@@ -53,7 +54,7 @@ export class RuntimeMessageHandler {
             }
             case "set-settings": {
                 this.setPropagateStores(false);
-                // applySnapshot(this.stores.settings, message.data);
+                applySnapshot(this.stores.settings, message.data);
                 this.setPropagateStores(true);
                 break;
             }
@@ -117,11 +118,12 @@ export class RuntimeMessageHandler {
         this.propagateStores = propagate;
     }
 
-    public setHostname(hostname: string): void {
+    public setHostData(hostname: string, schema: string): void {
         if (this.port) {
             this.port.postMessage({
                 action: "set-hostname",
                 hostname,
+                schema,
             });
         }
     }

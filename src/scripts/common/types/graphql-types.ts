@@ -17,15 +17,21 @@ export interface InspectResponse {
 
 export interface MutationInspectEventsSubscribeParams {
     clientId: string;
-    events: Instance<typeof MobX.ModuleEventSetTypeInput>;
+    events: Instance<typeof MobX.ModuleEventSetInput>;
+}
+
+export interface MutationInspectEventsUnsubscribeParams {
+    clientId: string;
 }
 
 export interface MutationRequest {
     inspectEventsSubscribe: MutationInspectEventsSubscribeParams;
+    inspectEventsUnsubscribe: MutationInspectEventsUnsubscribeParams;
 }
 
 export interface MutationResponse {
     inspectEventsSubscribe: Optional<string>;
+    inspectEventsUnsubscribe: Optional<string>;
 }
 
 export interface QueryUserParams {

@@ -1,3 +1,5 @@
+import {ModuleNameList} from "@common/stores/panel";
+
 export const defaultPanelStore = {
     "phpConsole": {
         "editors": {
@@ -16,5 +18,11 @@ export const defaultPanelStore = {
                 "message": "",
             }],
         }
+    },
+    "eventMonitor": {
+        "events": ModuleNameList.reduce((acc, name) => ({...acc, [name]: []}), {}),
+        "eventModal": {
+            "openTabs": [],
+        },
     }
 };

@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {browser} from "webextension-polyfill-ts";
 import uuid from "uuid";
+import {omit} from "lodash";
 
 import {App as StdApp} from "@std/app";
 
@@ -14,7 +15,8 @@ import {
     flagStore,
     PanelStoreContext,
     SettingsStoreContext,
-    FlagStoreContext
+    FlagStoreContext,
+    runtimePanelStore
 } from "@devpanel/state";
 
 import {RuntimeMessageHandler} from "@devpanel/messaging/runtime";
@@ -33,6 +35,7 @@ export class App extends StdApp implements PanelApp {
         super();
 
         this.runtimeMessageHandler = new RuntimeMessageHandler(this.getStores(), {
+            getId: this.getId,
             onConnect: this.onConnect,
             onDisconnect: this.onDisconnect,
             onMessage: this.onMessage,
@@ -41,6 +44,9 @@ export class App extends StdApp implements PanelApp {
 
         this.proxyMessageHandler = new ProxyMessageHandler(this.getStores(), {
             getId: this.getId,
+            onMessage: {
+                "remote:event": [this.onRemoteEvent],
+            },
         });
 
         this.setDOMEventHandlers();
@@ -70,6 +76,9 @@ export class App extends StdApp implements PanelApp {
         }
     };
 
+    /**
+     * TODO: Переделать на DI.
+     */
     protected setDOMEventHandlers(): void {
         document.addEventListener("DOMContentLoaded", () => {
             ReactDOM.render(
@@ -88,7 +97,10 @@ export class App extends StdApp implements PanelApp {
     protected async fetchPageInfo(): Promise<Optional<GenericPageInfo>> {
         try {
             this.pageInfo = await this.getInspectedPageData();
-            this.runtimeMessageHandler.setHostname(this.pageInfo.hostname);
+            this.runtimeMessageHandler.setHostData(
+                this.pageInfo.hostname,
+                this.pageInfo.protocol.replace(/[^a-z]/, "")
+            );
         } catch {
             console.log("Невозможно получить информацию о странице.");
         }
@@ -112,11 +124,37 @@ export class App extends StdApp implements PanelApp {
         }
     }
 
+    public getPageInfo = (): Optional<GenericPageInfo> => {
+        return this.pageInfo;
+    };
+
     public getId = (): string => {
         return this.uuid;
     };
 
-    public getPageInfo = (): Optional<GenericPageInfo> => {
-        return this.pageInfo;
+    /**
+     * TODO: Вынести в отдельный классы/классы.
+     *
+     * @param message
+     */
+    private onRemoteEvent: SocketMessageHandler = (message) => {
+        if (message.action !== "remote:event") {
+            return;
+        }
+
+        const str = JSON.stringify({
+            time: (new Date(message.time * 1000)).toLocaleTimeString(),
+            ...omit(message, ["time"], ["action"]),
+        }, null, 4);
+
+        runtimePanelStore.eventMonitor.appendToEventLog(str);
     };
+
+    public addMessageListener(action: SocketAction, fn: SocketMessageHandler): void {
+        this.proxyMessageHandler.addMessageListener(action, fn);
+    }
+
+    public removeMessageListener(action: SocketAction, fn: SocketMessageHandler): void {
+        this.proxyMessageHandler.removeMessageListener(action, fn);
+    }
 }

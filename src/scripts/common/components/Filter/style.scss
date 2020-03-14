@@ -1,0 +1,14 @@
+//noinspection CssUnknownTarget
+@import "@styles/variables.scss";
+//noinspection CssUnknownTarget
+@import "@styles/mixins.scss";
+
+.filter {
+    position: relative;
+    display: flex;
+    margin-bottom: 12px;
+}
+
+.filter__input {
+    flex: 1;
+}

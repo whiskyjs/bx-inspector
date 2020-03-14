@@ -12,7 +12,7 @@ export const defaultSettings = {
     common: {
         networking: {
             graphqlPath: "/bitrix/tools/wjs_api_graphql.php",
-            websocketUrl: "http://127.0.0.1:3000/subscriber/",
+            websocketUrl: "http://segfault.pro:34567/subscriber/",
         }
     }
 };
