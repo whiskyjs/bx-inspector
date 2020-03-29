@@ -16,7 +16,7 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx,.src tests",
     "check": "npm run test && npm run lint",
     "dev-server": "webpack-dev-server",
-    "release": "webpack --config webpack.production.js",
+    "release": "NODE_ENV=production webpack --config webpack.production.js",
     "get-schema": "graphql get-schema",
     "generate-types": "npm run-script get-schema && node ./typegen/run.js"
   },
