@@ -1,14 +1,14 @@
 {
   "name": "@wjs/bx-inspector",
   "version": "0.1.0-beta",
-  "description": "Средства разработки и отладки для CMS 1C-Bitrix",
+  "description": "Средства отладки для CMS 1C-Bitrix",
   "private": true,
   "repository": {
     "type": "git",
     "url": "git@github.com:whiskyjs/bx-inspector.git"
   },
   "author": "Alexander Selyuchenko",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "webpack",
     "watch": "webpack --watch",
