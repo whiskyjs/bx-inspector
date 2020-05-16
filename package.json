@@ -12,9 +12,8 @@
   "scripts": {
     "build": "webpack",
     "watch": "webpack --watch",
-    "test": "jest",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx,.src tests",
-    "check": "npm run test && npm run lint",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx src",
+    "check": "npm run lint",
     "dev-server": "webpack-dev-server",
     "release": "NODE_ENV=production webpack --config webpack.production.js",
     "get-schema": "graphql get-schema",
@@ -33,7 +32,6 @@
     "@types/classnames": "^2.2.9",
     "@types/core-js": "^2.5.2",
     "@types/immutability-helper": "^2.6.3",
-    "@types/jest": "^24.0.25",
     "@types/localforage": "0.0.34",
     "@types/lodash": "^4.14.149",
     "@types/prop-types": "^15.7.3",
@@ -66,8 +64,6 @@
     "graphql-tag": "^2.10.1",
     "husky": "^3.1.0",
     "immutability-helper": "^3.0.1",
-    "jest": "^24.9.0",
-    "jquery": "^3.4.1",
     "localforage": "^1.7.3",
     "lodash": "^4.17.15",
     "mini-css-extract-plugin": "^0.8.2",
@@ -108,7 +104,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run test && npm run lint"
+      "pre-commit": "npm run lint"
     }
   }
 }

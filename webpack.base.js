@@ -152,10 +152,6 @@ const config = {
             configure: {},
         }),
 
-        new webpack.ProvidePlugin({
-            $: "jquery",
-        }),
-
         new MonacoWebpackPlugin({
             languages: ["php"]
         }),
