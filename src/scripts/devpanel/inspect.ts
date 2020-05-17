@@ -11,3 +11,7 @@ export const getGenericPageInfo = `
     language: (typeof BX === "function") && (typeof BX.bitrix_sessid === "function") && BX.message("LANGUAGE_ID"),
 });
 `;
+
+export const setCookie = (name: string, value: string): string => `
+document.cookie = '${name}=${value}';
+`;

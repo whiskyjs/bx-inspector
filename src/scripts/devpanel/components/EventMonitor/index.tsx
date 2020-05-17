@@ -6,6 +6,7 @@ import {observer} from "mobx-react";
 import {capitalize} from "lodash";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {editor} from "monaco-editor";
+import {browser} from "webextension-polyfill-ts";
 
 import {PanelStoreContext, runtimePanelStore} from "@devpanel/state";
 import {Editor} from "@devpanel/components/Editor";
@@ -18,6 +19,8 @@ import {Modal, ModalButtons, ModalMouseEvent} from "@common/components/Modal";
 import * as MobX from "@common/types/graphql-models";
 import {Accordion, AccordionTab} from "@common/components/Accordion";
 import {Filter, FilterChangeEventHandler} from "@common/components/Filter";
+import {setCookie} from "@devpanel/inspect";
+import {EVENT_MONITOR_COOKIE} from "@common/constants";
 
 // eslint-disable-next-line
 export interface EventMonitorProps {
@@ -97,6 +100,8 @@ export class EventMonitor extends PureComponent<EventMonitorProps, EventMonitorS
             );
 
             runtimePanelStore.eventMonitor.setSubscriptionActive(false);
+
+            browser.devtools.inspectedWindow.eval(setCookie(EVENT_MONITOR_COOKIE, ""));
         } finally {
             client.cancelRequestsActive();
         }
@@ -181,6 +186,8 @@ export class EventMonitor extends PureComponent<EventMonitorProps, EventMonitorS
                 app.getId(),
                 cast<Instance<typeof MobX.ModuleEventSetInput>>(events),
             );
+
+            browser.devtools.inspectedWindow.eval(setCookie(EVENT_MONITOR_COOKIE, "1"));
         } finally {
             client.cancelRequestsActive();
         }
