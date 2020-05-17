@@ -49,3 +49,7 @@ export function blocks(pairs: Array<[Optional<boolean>, Optional<ReactElement>]>
         {result}
     </Fragment>);
 }
+
+export function isProduction(): boolean {
+    return process.env.NODE_ENV === "production";
+}

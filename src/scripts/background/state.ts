@@ -5,6 +5,7 @@ import {BackgroundStore} from "@common/stores/background";
 import {defaultBackgroundStore} from "@common/state/background";
 import {FlagStore} from "@common/stores/flags";
 import {defaultFlagStore} from "@common/state/flags";
+import {isProduction} from "@common/functions";
 
 localForage.config({
     driver: localForage.INDEXEDDB,
@@ -22,20 +23,23 @@ function setPersistBackgroundStore(persist = true): void {
 }
 
 onSnapshot(backgroundStore, (snapshot) => {
-    if (persistBackgroundStore) {
+    if (persistBackgroundStore && isProduction()) {
         localForage.setItem("data", snapshot);
     }
 });
 
-(async (): Promise<void> => {
-    const snapshot: string = await localForage.getItem("data");
 
-    if (snapshot) {
-        setPersistBackgroundStore(false);
-        applySnapshot(backgroundStore, snapshot);
-        setPersistBackgroundStore(true);
-    }
-})();
+if (isProduction()) {
+    (async (): Promise<void> => {
+        const snapshot: string = await localForage.getItem("data");
+
+        if (snapshot) {
+            setPersistBackgroundStore(false);
+            applySnapshot(backgroundStore, snapshot);
+            setPersistBackgroundStore(true);
+        }
+    })();
+}
 
 export {
     backgroundStore,
