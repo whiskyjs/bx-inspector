@@ -4,7 +4,7 @@ import React, {PureComponent, ReactElement} from "react";
 import {Instance, isAlive} from "mobx-state-tree";
 import {observer} from "mobx-react";
 import {debounce, findIndex} from "lodash";
-import {editor, KeyCode, KeyMod} from "monaco-editor";
+import {ICommand, IEditorProps} from "react-ace";
 import {toast} from "react-toastify";
 
 import {Tab, TablessMouseEvent, TabMouseEvent, Tabs} from "@common/components/Tabs";
@@ -122,6 +122,7 @@ export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHP
     protected getEditorPanel = (tab: Instance<typeof PHPEditor>): ReactElement => {
         return (<Editor
             key={tab.uuid}
+            uuid={tab.uuid}
             onChange={(data): void => this.setEditorContents(tab, data)}
             value={tab.contents}
             viewState={tab.viewState}
@@ -130,16 +131,15 @@ export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHP
     };
 
     // eslint-disable-next-line
-    protected getActions(tabId: string): ReadonlyArray<editor.IActionDescriptor> {
+    protected getActions(tabId: string): ICommand[] {
         return [{
-            id: "wjs.evaluate",
-            label: "Evaluate",
-
-            keybindings: [
-                KeyMod.CtrlCmd | KeyCode.Enter,
-            ],
-
-            run: async (editor: editor.ICodeEditor): Promise<void> => {
+            name: "bx-inspector.evaluate",
+            bindKey: {
+                win: "Ctrl-Enter", mac: "Command-Enter"
+            },
+            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+            // @ts-ignore
+            exec: async (editor: IEditorProps): Promise<void> => {
                 const {setActiveResultValue} = this.props;
 
                 const client = GraphClient.createClient({
@@ -148,7 +148,7 @@ export class PHPConsoleEditors extends PureComponent<PHPConsoleEditorsProps, PHP
 
                 try {
                     try {
-                        const result = await client.inspectEvaluate(editor.getValue());
+                        const result = await client.inspectEvaluate(editor!.session!.getValue());
 
                         if (result) {
                             setActiveResultValue(result.output!, result.result!);

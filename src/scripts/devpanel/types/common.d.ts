@@ -1,4 +1,5 @@
-import {editor} from "monaco-editor";
+import {Ace} from "ace-builds";
+
 import {Instance} from "mobx-state-tree";
 
 import {FlagStore} from "@common/stores/flags";
@@ -20,9 +21,15 @@ declare global {
         panel: Instance<typeof PanelStore>;
     }
 
+    interface EditorViewState {
+        scrollTop?: number;
+        scrollLeft?: number;
+        selection: Ace.SavedSelection | Ace.SavedSelection[];
+    }
+
     interface EditorChangeData extends Object {
         contents?: string;
-        viewState?: editor.ICodeEditorViewState;
+        viewState?: string;
         message?: string;
     }
 }

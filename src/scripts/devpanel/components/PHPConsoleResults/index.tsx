@@ -96,6 +96,7 @@ export class PHPConsoleResults extends PureComponent<PHPConsoleResultsProps, PHP
     protected getResultPanel = (tab: Instance<typeof PHPResult>): ReactElement => {
         return <Editor
             key={tab.uuid}
+            uuid={tab.uuid}
             readOnly={true}
             message={tab.message}
             value={tab.contents}

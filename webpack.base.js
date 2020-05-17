@@ -6,7 +6,6 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ExtraWatchWebpackPlugin = require("extra-watch-webpack-plugin");
 const NunjucksWebpackPlugin = require("nunjucks-webpack-plugin");
-const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 // const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 const config = {
@@ -150,10 +149,6 @@ const config = {
             writeToFileEmit: true,
 
             configure: {},
-        }),
-
-        new MonacoWebpackPlugin({
-            languages: ["php"]
         }),
 
         new webpack.DefinePlugin({

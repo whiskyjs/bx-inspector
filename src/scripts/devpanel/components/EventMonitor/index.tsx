@@ -5,7 +5,6 @@ import {cast, Instance} from "mobx-state-tree";
 import {observer} from "mobx-react";
 import {capitalize} from "lodash";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import {editor} from "monaco-editor";
 import {browser} from "webextension-polyfill-ts";
 
 import {PanelStoreContext, runtimePanelStore} from "@devpanel/state";
@@ -55,6 +54,7 @@ export class EventMonitor extends PureComponent<EventMonitorProps, EventMonitorS
             return;
         }
 
+        /*
         const editor = this.editor.current.getEditor();
         const model = editor.getModel() as editor.ITextModel;
         const lastLineNumber = model.getLineCount();
@@ -66,6 +66,7 @@ export class EventMonitor extends PureComponent<EventMonitorProps, EventMonitorS
             startLineNumber: lastLineNumber,
             endLineNumber: lastLineNumber,
         });
+         */
     }
 
     public componentDidMount(): void {

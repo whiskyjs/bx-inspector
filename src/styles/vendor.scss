@@ -1,5 +1,9 @@
 @import "variables";
 
+* {
+    font-family: $default-font !important;
+}
+
 // ~react-toastify
 .Toastify__toast-container {
     &, * {
@@ -45,30 +49,14 @@
     }
 }
 
-// ~monaco-editor
-*:not(.codicon) {
-    font-family: $default-font !important;
+// ~ace-editor
+.ace_editor,
+.ace_tooltip {
+    &, * {
+        font-family: $default-mono-font !important;
+        font-size: $default-mono-font-size !important;
+    }
 }
-
-.monaco-editor {
-    .suggest-widget {
-        > * {
-            font-size: $default-font-size !important;
-        }
-
-        * {
-            font-size: $default-mono-font-size;
-        }
-    }
-
-    .editor-scrollable {
-        &, * {
-            font-family: $default-mono-font !important;
-        }
-    }
-
-    // Предотвращает мерцание текста при инициализации редактора и системы подсветки синтаксиса
-    .mtkb {
-        font-weight: normal !important;
-    }
+.ace_tooltip {
+    background-image: none !important;
 }

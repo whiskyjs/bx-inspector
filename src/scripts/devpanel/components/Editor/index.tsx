@@ -1,12 +1,17 @@
 import "./style.scss";
 
-import React, {Component, KeyboardEvent, ReactElement} from "react";
-import {editor} from "monaco-editor";
-import MonacoEditor from "react-monaco-editor";
+import React, {Component, ReactElement} from "react";
+
+import AceEditor, {IAceOptions, IEditorProps, ICommand} from "react-ace";
+import "ace-builds/src-noconflict/mode-php";
+import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/ext-language_tools";
+
 import {debounce} from "lodash";
 import {shallowEqual} from "@babel/types";
 
-import {blocks, collect} from "@common/functions";
+import {blocks} from "@common/functions";
 import cn from "classnames";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -17,7 +22,8 @@ export interface EditorProps {
     readOnly?: boolean;
     message?: string;
     onChange?: (data: EditorChangeData) => void;
-    actions?: ReadonlyArray<editor.IActionDescriptor>;
+    actions?: ReadonlyArray<ICommand>;
+    uuid: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -30,11 +36,9 @@ export class Editor extends Component<EditorProps, EditorState> {
         readOnly: false,
     };
 
-    protected editor?: editor.IStandaloneCodeEditor;
+    protected editor?: IEditorProps;
 
-    protected options?: editor.IEditorOptions;
-
-    protected onDoubleShift: Function;
+    protected options: IAceOptions;
 
     protected onSaveEditorState?: Function;
 
@@ -45,25 +49,15 @@ export class Editor extends Component<EditorProps, EditorState> {
 
     protected activityTimeout?: NodeJS.Timeout;
 
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-    protected shiftIsDown: boolean = false;
-
     constructor(props: EditorProps) {
         super(props);
 
         this.options = {
-            selectOnLineNumbers: true,
-            automaticLayout: true,
-            folding: true,
-            readOnly: props.readOnly,
-            showFoldingControls: "always",
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            enableSnippets: true,
         };
-
         this.state = {};
-
-        this.onDoubleShift = collect(() => {
-            this.editor && this.editor.trigger("Editor", "editor.action.quickCommand", {});
-        }, 2, 200);
 
         this.onSaveEditorState = debounce(() => {
             if (this.props.onChange && Object.keys(this.editorChangeData).length) {
@@ -73,30 +67,25 @@ export class Editor extends Component<EditorProps, EditorState> {
         }, 500);
     }
 
-    protected editorDidMount = (editor: editor.IStandaloneCodeEditor): void => {
+    protected onEditorLoad = (editor: IEditorProps): void => {
         const {viewState, actions} = this.props;
 
         this.editor = editor;
 
         if (viewState) {
-            editor.restoreViewState(JSON.parse(viewState));
+            this.setViewState(viewState);
         }
 
         if (actions) {
-            actions.forEach(action => editor.addAction({
-                ...action,
-                run: (() => action.run(editor))
-            }));
+            actions.forEach(action => editor.commands!.addCommand(action));
         }
-
-        editor.onDidChangeCursorPosition(this.onDidChangeCursorPosition);
     };
 
     public componentDidUpdate(): void {
         const {viewState} = this.props;
 
         if (this.editor && viewState) {
-            this.editor.restoreViewState(JSON.parse(viewState));
+            this.setViewState(viewState);
         }
     }
 
@@ -107,22 +96,6 @@ export class Editor extends Component<EditorProps, EditorState> {
         return !this.active
             && (!shallowEqual(nextProps, this.props) || !shallowEqual(nextState, this.state));
     }
-
-    protected onKeyDown = (e: KeyboardEvent<HTMLElement>): void => {
-        if (e.key === "Shift") {
-            if (this.editor && this.editor.hasTextFocus() && !this.shiftIsDown) {
-                this.onDoubleShift(e);
-            }
-
-            this.shiftIsDown = true;
-        }
-    };
-
-    protected onKeyUp = (e: KeyboardEvent<HTMLElement>): void => {
-        if (e.key === "Shift") {
-            this.shiftIsDown = false;
-        }
-    };
 
     protected onChange = ((contents: string): void => {
         this.active = true;
@@ -135,11 +108,11 @@ export class Editor extends Component<EditorProps, EditorState> {
             this.active = false;
         }, 2000);
 
-        if (this.onSaveEditorState && this.editor) {
+        if (this.onSaveEditorState) {
             if ((typeof contents !== "undefined") && contents) {
                 Object.assign(this.editorChangeData, {
                     contents,
-                    viewState: this.editor.saveViewState() || undefined,
+                    viewState: this.getViewState(),
                 });
 
                 this.onSaveEditorState();
@@ -147,18 +120,33 @@ export class Editor extends Component<EditorProps, EditorState> {
         }
     });
 
-    protected onDidChangeCursorPosition = ((): void => {
+    protected onSelectionChange = ((): void => {
         if (this.onSaveEditorState && this.editor) {
             Object.assign(this.editorChangeData, {
-                viewState: this.editor.saveViewState() || undefined,
+                viewState: this.getViewState(),
             });
 
             this.onSaveEditorState();
         }
     });
 
+    protected getViewState(): EditorViewState {
+        const session = this.editor!.session;
+
+        return {
+            selection: session.selection.toJSON(),
+        };
+    }
+
+    protected setViewState(viewState: string): void {
+        const session = this.editor!.session;
+        const state = JSON.parse(viewState);
+
+        session.selection.fromJSON(state.selection);
+    }
+
     public render(): ReactElement {
-        const {defaultValue, value, message, readOnly} = this.props;
+        const {defaultValue, value, message, readOnly, uuid} = this.props;
 
         return (
             <div className="editor">
@@ -167,17 +155,21 @@ export class Editor extends Component<EditorProps, EditorState> {
                     className={cn("editor__input", {
                         "editor__input--readonly": readOnly,
                     })}
-                    onKeyDown={this.onKeyDown}
-                    onKeyUp={this.onKeyUp}
                 >
-                    <MonacoEditor
-                        language="php"
+                    <AceEditor
+                        name={uuid}
+                        mode="php"
+                        theme="github"
+                        height="100%"
+                        width="100%"
                         defaultValue={defaultValue}
                         value={value}
-                        options={this.options}
+                        setOptions={this.options}
+                        onLoad={this.onEditorLoad}
+                        onSelectionChange={this.onSelectionChange}
+                        onCursorChange={this.onSelectionChange}
                         onChange={this.onChange}
-                        editorDidMount={this.editorDidMount}
-                    />
+                    />,
                 </div>
                 <div className="editor__footer">
                     {blocks([
@@ -188,7 +180,7 @@ export class Editor extends Component<EditorProps, EditorState> {
         );
     }
 
-    public getEditor(): editor.IStandaloneCodeEditor {
+    public getEditor(): IAceOptions {
         if (!this.editor) {
             throw new Error("Ошибка - этот код никогда не должен выполняться.");
         }

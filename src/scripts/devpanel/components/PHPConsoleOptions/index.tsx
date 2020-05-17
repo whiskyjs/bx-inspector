@@ -51,6 +51,7 @@ export class PHPConsoleOptions extends PureComponent<PHPConsoleOptionsProps, PHP
                             viewState={prologue.viewState}
                             onChange={(data): void => this.setEditorContents("prologue", data)}
                             key="prologue"
+                            uuid="prologue"
                         />}
                     />
                     <Tab
@@ -61,6 +62,7 @@ export class PHPConsoleOptions extends PureComponent<PHPConsoleOptionsProps, PHP
                             value={epilogue.contents}
                             viewState={epilogue.viewState}
                             key="epilogue"
+                            uuid="prologue"
                         />}
                     />
                 </Tabs>
